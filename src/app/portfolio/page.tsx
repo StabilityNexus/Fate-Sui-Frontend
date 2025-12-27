@@ -880,7 +880,7 @@ export default function PortfolioPage() {
             {activePoolsData.length > 0 ? (
               <div className="space-y-6">
                 {/* Bull and Bear Position Charts */}
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-6">
                   {/* Bull Positions Chart */}
                   <PositionChart
                     data={bullPositionsData}
@@ -899,7 +899,7 @@ export default function PortfolioPage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-4 max-h-[400px] overflow-y-auto overfolw-x-hidden">
+                      <div className="space-y-4 max-h-[400px] overflow-y-auto overflow-x-hidden">
                         {activePoolsData.map((pool, index) => (
                           <div
                             key={pool.id}
