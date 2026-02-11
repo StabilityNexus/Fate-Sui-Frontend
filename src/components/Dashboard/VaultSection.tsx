@@ -165,14 +165,19 @@ const VaultSection = ({
     valueClass?: string;
     children?: React.ReactNode;
   }) => (
-    <div className="flex items-center justify-between py-2 px-1">
-      <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+    <div className="grid grid-cols-[auto_1fr] items-center gap-4 py-2 px-1 min-w-0">
+      <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300 whitespace-nowrap">
         {label}
       </span>
+
       {value ? (
-        <span className={`text-sm ${valueClass}`}>{value}</span>
+        <span
+          className={`text-sm text-right whitespace-nowrap overflow-hidden tabular-nums ${valueClass}`}
+        >
+          {value}
+        </span>
       ) : (
-        <div>{children}</div>
+        <div className="text-right">{children}</div>
       )}
     </div>
   );
@@ -199,7 +204,7 @@ const VaultSection = ({
         </div>
 
         {/* Market Stats */}
-        <div className="space-y-1 mb-6">
+        <div className="space-y-2 mb-6">
           <StatRow
             label="Reserve"
             value={`${formatNumber(
@@ -231,16 +236,16 @@ const VaultSection = ({
             </h4>
             <div className="space-y-1">
               <StatRow
-                label="Tokens "
-                value={`${formatNumber(userTokens, 6)} ${symbol}`}
+                label="Tokens"
+                value={` ${formatNumber(userTokens, 6)} ${symbol}`}
               />
-              <StatRow
-                label="Value"
-                value={`${formatNumber(value, 6)} SUI`}
-              />
+              <StatRow label="Value" value={` ${formatNumber(value, 6)} SUI`} />
               <StatRow
                 label="P&L"
-                value={`${returns >= 0 ? "+" : ""}${formatNumber(returns, 2)}%`}
+                value={` ${returns >= 0 ? "+" : ""}${formatNumber(
+                  returns,
+                  2
+                )}%`}
                 valueClass={`font-bold text-lg ${
                   returns >= 0 ? "text-green-600" : "text-red-600"
                 }`}
