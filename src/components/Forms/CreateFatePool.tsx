@@ -18,7 +18,7 @@ import ReviewStep from "./Steps/ReviewStep";
 import StepIndicator from "./Steps/StepIndicator";
 import type { FormData } from "@/types/FormData";
 import { Transaction } from "@mysten/sui/transactions";
-import { useWallet } from "@suiet/wallet-kit";
+import { useCurrentAccount, useSignAndExecuteTransaction } from "@mysten/dapp-kit";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
@@ -27,7 +27,8 @@ type FormErrors = Partial<Record<keyof FormData, string>>;
 
 export default function CreateFatePoolForm() {
   const router = useRouter();
-  const { account, signAndExecuteTransaction } = useWallet();
+  const account = useCurrentAccount();
+  const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -161,15 +162,14 @@ export default function CreateFatePoolForm() {
     try {
       const poolName = formData.poolName?.trim() || "Default Pool";
       const poolDescription = formData.poolDescription?.trim() || "";
-      const pairId = Number(formData.pairId) || 18;
+      const pairId = formData.pairId !== '' ? Number(formData.pairId) : 18;
       if (!Number.isFinite(pairId) || pairId < 0 || pairId > 0xffffffff) {
         toast.error("Invalid pair id. Provide a numeric pairId (u32).");
         setIsSubmitting(false);
         return;
       }
 
-      const assetAddress =
-        formData.pairId || "0x0000000000000000000000000000000000000000";
+      const assetAddress = "0x0000000000000000000000000000000000000000000000000000000000000000";
       const FEE_NUMERATOR = 1000;
 
       const protocolFee = BigInt(
@@ -206,7 +206,7 @@ export default function CreateFatePoolForm() {
 
       const tx = new Transaction();
 
-      const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(initialSuiAmount)]);
+      const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(Number(initialSuiAmount))]);
 
       tx.moveCall({
         target: `${PACKAGE_ID}::prediction_pool::create_pool`,
@@ -217,10 +217,10 @@ export default function CreateFatePoolForm() {
           tx.pure.vector("u8", strToU8Vec(poolDescription)),
           tx.pure.u32(pairId),
           tx.pure.address(assetAddress),
-          tx.pure.u64(protocolFee),
-          tx.pure.u64(mintFee),
-          tx.pure.u64(burnFee),
-          tx.pure.u64(poolCreatorFee),
+          tx.pure.u64(Number(protocolFee)),
+          tx.pure.u64(Number(mintFee)),
+          tx.pure.u64(Number(burnFee)),
+          tx.pure.u64(Number(poolCreatorFee)),
           tx.pure.address(poolCreator),
           tx.pure.vector("u8", strToU8Vec(bullTokenName)),
           tx.pure.vector("u8", strToU8Vec(bullTokenSymbol)),
@@ -234,6 +234,23 @@ export default function CreateFatePoolForm() {
       tx.setGasBudget(100_000_000);
 
       console.log("Submitting create_pool tx...");
+      console.log("Transaction args:", {
+        poolName,
+        poolDescription,
+        pairId,
+        assetAddress,
+        protocolFee: protocolFee.toString(),
+        mintFee: mintFee.toString(),
+        burnFee: burnFee.toString(),
+        poolCreatorFee: poolCreatorFee.toString(),
+        poolCreator,
+        bullTokenName,
+        bullTokenSymbol,
+        bearTokenName,
+        bearTokenSymbol,
+        initialSuiAmount: initialSuiAmount.toString(),
+      });
+
       const result = await signAndExecuteTransaction({ transaction: tx });
 
       console.log("Pool created successfully:", result);

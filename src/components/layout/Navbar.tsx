@@ -6,8 +6,7 @@ import Image from "next/image";
 import logoWhite from "../../../public/logo-white.png";
 import { useTheme } from "next-themes";
 import { ModeToggle } from "../darkModeToggle";
-import { ConnectButton } from "@suiet/wallet-kit";
-import "@suiet/wallet-kit/style.css";
+import { ConnectButton } from "@mysten/dapp-kit";
 import navLinks from "@/constants/NavLinks";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -89,15 +88,7 @@ const Navbar = () => {
 
           {/* Desktop Wallet & Theme */}
           <div className="hidden min-[970px]:flex items-center space-x-3 min-[900px]:space-x-4 flex-shrink-0 min-w-[200px] justify-end">
-            <ConnectButton
-              className={`font-medium rounded-full transition-colors text-sm ${
-                resolvedTheme === "dark"
-                  ? "bg-white text-black hover:bg-neutral-200"
-                  : "bg-black text-white hover:bg-neutral-200"
-              }`}
-            >
-              Connect Wallet
-            </ConnectButton>
+            <ConnectButton />
             <ModeToggle />
           </div>
 
@@ -162,15 +153,7 @@ const Navbar = () => {
 
               {/* Mobile Wallet & Theme */}
               <div className="p-3 space-y-2">
-                <ConnectButton
-                  className={`w-full font-medium rounded-full transition-colors text-sm py-2 ${
-                    resolvedTheme === "dark"
-                      ? "bg-white text-black hover:bg-neutral-200"
-                      : "bg-black text-white hover:bg-neutral-200"
-                  }`}
-                >
-                  Connect Wallet
-                </ConnectButton>
+                <ConnectButton />
                 <div className="flex justify-center">
                   <ModeToggle />
                 </div>

@@ -1,8 +1,7 @@
 "use client";
 import { useCallback } from "react";
-import { SuiClient } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
-import { useWallet } from "@suiet/wallet-kit";
+import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
 import toast from "react-hot-toast";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
 interface BuyTokensParams {
@@ -13,7 +12,9 @@ interface BuyTokensParams {
 }
 
 export function useBuyTokens() {
-  const { account, signAndExecuteTransaction } = useWallet();
+  const account = useCurrentAccount();
+  const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const suiClient = useSuiClient();
 
   const buyTokens = useCallback(
     async ({ amount, isBull, vaultId }: BuyTokensParams) => {
@@ -45,10 +46,6 @@ export function useBuyTokens() {
 
         const amountInMist = BigInt(amount * 1_000_000_000);
 
-        const suiClient = new SuiClient({
-          url: "https://fullnode.testnet.sui.io:443",
-        });
-
         const coins = await suiClient.getCoins({
           owner: account.address,
           coinType: "0x2::sui::SUI",
@@ -74,7 +71,7 @@ export function useBuyTokens() {
             tx.object(USER_REGISTRY!),
             tx.pure.bool(isBull),
             tx.object(NEXT_SUPRA_ORACLE_HOLDER as string),
-            tx.splitCoins(tx.gas, [tx.pure.u64(amountInMist)]),
+            tx.splitCoins(tx.gas, [tx.pure.u64(Number(amountInMist))]),
           ],
         });
         tx.setGasBudget(100_000_000);
@@ -94,7 +91,7 @@ export function useBuyTokens() {
         );
       }
     },
-    [account?.address, signAndExecuteTransaction]
+    [account?.address, signAndExecuteTransaction, suiClient]
   );
 
   return { buyTokens };

@@ -12,7 +12,7 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { InfoIcon, RefreshCw } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
-import { useWallet } from "@suiet/wallet-kit";
+import { useCurrentAccount } from "@mysten/dapp-kit";
 import { useSearchParams } from "next/navigation";
 import TradingViewWidget from "@/components/TradingViewWidget";
 import { useDistribute } from "@/fateHooks/useDistribute";
@@ -30,7 +30,8 @@ export default function PredictionPoolDashboard() {
   const { distribute } = useDistribute();
   const { theme } = useTheme();
   const params = useSearchParams();
-  const { account, connected } = useWallet();
+  const account = useCurrentAccount();
+  const connected = !!account;
   const poolId = params?.get("id");
   const { pool, userBalances, userAvgPrices, loading, error, refetch } =
     usePool(poolId as string, account?.address as string);

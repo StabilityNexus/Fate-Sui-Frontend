@@ -1,7 +1,7 @@
 "use client";
 import { useCallback } from "react";
 import { Transaction } from "@mysten/sui/transactions";
-import { useWallet } from "@suiet/wallet-kit";
+import { useCurrentAccount, useSignAndExecuteTransaction } from "@mysten/dapp-kit";
 import toast from "react-hot-toast";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
 
@@ -12,7 +12,8 @@ interface SellTokensParams {
 }
 
 export function useSellTokens() {
-  const { account, signAndExecuteTransaction } = useWallet();
+  const account = useCurrentAccount();
+  const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
   const sellTokens = useCallback(
     async ({ amount, isBull, vaultId }: SellTokensParams) => {
@@ -44,12 +45,12 @@ export function useSellTokens() {
             tx.object(vaultId),  
             tx.object(USER_REGISTRY!),             
             tx.pure.bool(isBull),             
-            tx.pure.u64(tokenAmount),         
+            tx.pure.u64(Number(tokenAmount)),         
             tx.object(NEXT_SUPRA_ORACLE_HOLDER),   
           ],
         });
 
-        tx.setGasBudget(100_000_00);
+        tx.setGasBudget(100_000_000);
 
         console.log("Executing sell transaction...");
         const result = await signAndExecuteTransaction({ transaction: tx });

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useCallback } from "react";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { Transaction } from "@mysten/sui/transactions";
 import Decimal from "decimal.js";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
@@ -79,7 +79,7 @@ export const usePool = (
   const packageId = PROTOCOL_ADDRESSES_TESTNET.PACKAGE_ID;
 
   const fetchUserBalances = async (
-    client: SuiClient,
+    client: SuiJsonRpcClient,
     poolObjectId: string,
     userAddr: string
   ): Promise<UserBalances> => {
@@ -160,7 +160,7 @@ export const usePool = (
     }
   };
   const fetchUserAverageBalances = async (
-    client: SuiClient,
+    client: SuiJsonRpcClient,
     poolObjectId: string,
     userAddr: string
   ): Promise<UserAvgPrices> => {
@@ -263,8 +263,9 @@ export const usePool = (
     setError(null);
 
     try {
-      const client = new SuiClient({
+      const client = new SuiJsonRpcClient({
         url: "https://fullnode.testnet.sui.io:443",
+        network: "testnet",
       });
       const objectID = decodeURIComponent(id);
 

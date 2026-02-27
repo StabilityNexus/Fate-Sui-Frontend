@@ -3,7 +3,7 @@ import "dotenv/config"
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { fromBase64 } from "@mysten/sui/utils"
 
-import { SuiClient, SuiObjectChange } from '@mysten/sui/client';
+import { SuiJsonRpcClient, SuiObjectChange } from '@mysten/sui/jsonRpc';
 import { Transaction } from '@mysten/sui/transactions'
 import path, { dirname } from "path";
 import { execSync } from "child_process";
@@ -17,8 +17,9 @@ if (!priv_key) {
 }
 const keypair = Ed25519Keypair.fromSecretKey(fromBase64(priv_key).slice(1));
 const path_to_contracts = path.join(dirname(fileURLToPath(import.meta.url)), "../contracts")
-const client = new SuiClient({
+const client = new SuiJsonRpcClient({
     url: 'https://fullnode.testnet.sui.io',
+    network: 'testnet',
 });
 
 
