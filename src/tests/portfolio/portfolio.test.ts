@@ -23,6 +23,13 @@ import {
 describe('Portfolio Management', () => {
   let poolId: string;
 
+  const ensurePoolId = () => {
+    if (!globalThis.testEnvironmentReady) return;
+    if (!poolId) {
+      throw new Error('Test setup failed: poolId is missing');
+    }
+  };
+
   beforeAll(async () => {
     if (!globalThis.testEnvironmentReady) {
       console.log('⚠️  Skipping portfolio tests - environment not ready');
@@ -30,13 +37,17 @@ describe('Portfolio Management', () => {
     }
 
     const { poolId: createdPoolId } = await createPool({ initialSuiAmount: 5 });
+    if (!createdPoolId) {
+      throw new Error('Failed to create pool for portfolio tests');
+    }
     poolId = createdPoolId;
     await wait(3000);
   }, 120000);
 
   describe('Balance Tracking', () => {
     it('should accurately track bull token balance', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       
@@ -65,7 +76,8 @@ describe('Portfolio Management', () => {
     }, 120000);
 
     it('should accurately track bear token balance', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       
@@ -81,7 +93,8 @@ describe('Portfolio Management', () => {
     }, 60000);
 
     it('should maintain balance after rebalance', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       
@@ -103,10 +116,13 @@ describe('Portfolio Management', () => {
 
   describe('Average Price Tracking', () => {
     it('should track bull token average price', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       
+      const beforeAvgPrices = await getUserAvgPrices(poolId, signerAddress);
+
       // Make purchase
       await purchaseTokens(poolId, 0.3, true);
       await wait(2000);
@@ -114,28 +130,36 @@ describe('Portfolio Management', () => {
       // Get average prices
       const avgPrices = await getUserAvgPrices(poolId, signerAddress);
       
-      // Average price should be set
-      expect(avgPrices.bullAvgPrice).toBeGreaterThanOrEqual(BigInt(0));
+      // Average price should increase and be non-zero
+      expect(avgPrices.bullAvgPrice).toBeGreaterThan(beforeAvgPrices.bullAvgPrice);
+      expect(avgPrices.bullAvgPrice).toBeGreaterThan(BigInt(0));
     }, 60000);
 
     it('should track bear token average price', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
+
+      const beforeAvgPrices = await getUserAvgPrices(poolId, signerAddress);
       
       await purchaseTokens(poolId, 0.3, false);
       await wait(2000);
       
       const avgPrices = await getUserAvgPrices(poolId, signerAddress);
       
-      expect(avgPrices.bearAvgPrice).toBeGreaterThanOrEqual(BigInt(0));
+      expect(avgPrices.bearAvgPrice).toBeGreaterThan(beforeAvgPrices.bearAvgPrice);
+      expect(avgPrices.bearAvgPrice).toBeGreaterThan(BigInt(0));
     }, 60000);
 
     it('should update average price on subsequent purchases', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       
+      const beforeAvgPrices = await getUserAvgPrices(poolId, signerAddress);
+
       // First purchase
       await purchaseTokens(poolId, 0.2, true);
       await wait(2000);
@@ -148,15 +172,17 @@ describe('Portfolio Management', () => {
       
       const secondAvgPrice = await getUserAvgPrices(poolId, signerAddress);
       
-      // Both should be valid
-      expect(firstAvgPrice.bullAvgPrice).toBeGreaterThanOrEqual(BigInt(0));
-      expect(secondAvgPrice.bullAvgPrice).toBeGreaterThanOrEqual(BigInt(0));
+      expect(firstAvgPrice.bullAvgPrice).toBeGreaterThan(beforeAvgPrices.bullAvgPrice);
+      expect(firstAvgPrice.bullAvgPrice).toBeGreaterThan(BigInt(0));
+      expect(secondAvgPrice.bullAvgPrice).toBeGreaterThan(firstAvgPrice.bullAvgPrice);
+      expect(secondAvgPrice.bullAvgPrice).toBeGreaterThan(BigInt(0));
     }, 90000);
   });
 
   describe('Multi-Purchase Tracking', () => {
     it('should correctly aggregate multiple purchases', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       
@@ -182,7 +208,8 @@ describe('Portfolio Management', () => {
 
   describe('Position Value', () => {
     it('should have valid position data', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       
@@ -201,7 +228,8 @@ describe('Portfolio Management', () => {
 
   describe('Balance After Rebalance', () => {
     it('should preserve token amounts through rebalance', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       

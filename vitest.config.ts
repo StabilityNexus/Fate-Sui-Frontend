@@ -5,18 +5,18 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['tests/**/*.test.ts'],
+    include: ['src/tests/**/*.test.ts'],
     exclude: ['node_modules', 'dist'],
     testTimeout: 120000, // 2 minutes for blockchain transactions
     hookTimeout: 120000,
-    setupFiles: ['./tests/setup.ts'],
+    setupFiles: ['./src/tests/setup.ts'],
     sequence: {
       shuffle: false, // Run tests in order
     },
     reporters: ['verbose'],
     coverage: {
       reporter: ['text', 'html'],
-      exclude: ['node_modules/', 'tests/'],
+      exclude: ['node_modules/', 'src/tests/'],
     },
   },
   resolve: {

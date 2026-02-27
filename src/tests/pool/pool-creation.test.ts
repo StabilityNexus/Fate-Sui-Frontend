@@ -88,17 +88,13 @@ describe('Pool Creation', () => {
       expect(totalReservesInSui).toBeLessThanOrEqual(initialAmount);
     }, 60000);
 
-    it('should set pool creator correctly', async () => {
+    it('should create pool successfully', async () => {
       if (shouldSkip()) return;
 
       const { poolId, result } = await createPool();
 
       expect(result.status).toBe('Success');
 
-      // The pool should be created by the signer
-      const signerAddress = getSignerAddress();
-      
-      // Pool state includes creator info
       const state = await getPoolState(poolId);
       expect(state).toBeDefined();
     }, 60000);

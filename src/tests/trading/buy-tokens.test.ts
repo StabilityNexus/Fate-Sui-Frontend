@@ -98,7 +98,7 @@ describe('Token Purchases', () => {
       const avgPrices = await getUserAvgPrices(poolId, signerAddress);
 
       // Average price should be set (greater than 0)
-      expect(avgPrices.bullAvgPrice).toBeGreaterThanOrEqual(BigInt(0));
+      expect(avgPrices.bullAvgPrice).toBeGreaterThan(BigInt(0));
     }, 60000);
 
     it('should emit correct events on purchase', async () => {

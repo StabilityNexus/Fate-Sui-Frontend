@@ -21,6 +21,13 @@ import {
 describe('Pool Rebalancing', () => {
   let poolId: string;
 
+  const ensurePoolId = () => {
+    if (!globalThis.testEnvironmentReady) return;
+    if (!poolId) {
+      throw new Error('Test setup failed: poolId is missing');
+    }
+  };
+
   beforeAll(async () => {
     if (!globalThis.testEnvironmentReady) {
       console.log('⚠️  Skipping rebalancing tests - environment not ready');
@@ -41,7 +48,8 @@ describe('Pool Rebalancing', () => {
 
   describe('rebalance_pool_entry', () => {
     it('should successfully execute rebalance', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const result = await rebalancePool(poolId);
 
@@ -50,7 +58,8 @@ describe('Pool Rebalancing', () => {
     }, 60000);
 
     it('should update pool price on rebalance', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       // Get state before rebalance
       const beforeState = await getPoolState(poolId);
@@ -68,7 +77,8 @@ describe('Pool Rebalancing', () => {
     }, 60000);
 
     it('should not change user token balances on rebalance', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       
@@ -88,7 +98,8 @@ describe('Pool Rebalancing', () => {
     }, 60000);
 
     it('should successfully handle multiple sequential rebalances', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       // Execute multiple rebalances
       for (let i = 0; i < 3; i++) {
@@ -99,7 +110,8 @@ describe('Pool Rebalancing', () => {
     }, 120000);
 
     it('should maintain reserve positivity after rebalance', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       await rebalancePool(poolId);
       await wait(2000);
@@ -113,7 +125,8 @@ describe('Pool Rebalancing', () => {
 
   describe('Rebalance with Activity', () => {
     it('should handle rebalance after trading activity', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       // Make some purchases
       await purchaseTokens(poolId, 0.2, true);
@@ -133,8 +146,9 @@ describe('Pool Rebalancing', () => {
       expect(result2.status).toBe('Success');
     }, 120000);
 
-    it('should track reserve ratio changes through rebalance', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+    it('should return positive reserve ratios', async () => {
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       // Get ratio before
       const beforeState = await getPoolState(poolId);
@@ -156,7 +170,8 @@ describe('Pool Rebalancing', () => {
 
   describe('Reserve Stability', () => {
     it('should maintain total liquidity through rebalance', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       // Get total before
       const beforeState = await getPoolState(poolId);

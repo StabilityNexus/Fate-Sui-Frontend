@@ -12,11 +12,11 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:ui": "vitest --ui",
-    "test:pool": "vitest run tests/pool",
-    "test:trading": "vitest run tests/trading",
-    "test:rebalancing": "vitest run tests/rebalancing",
-    "test:edge-cases": "vitest run tests/edge-cases",
-    "test:portfolio": "vitest run tests/portfolio"
+    "test:pool": "vitest run src/tests/pool",
+    "test:trading": "vitest run src/tests/trading",
+    "test:rebalancing": "vitest run src/tests/rebalancing",
+    "test:edge-cases": "vitest run src/tests/edge-cases",
+    "test:portfolio": "vitest run src/tests/portfolio"
   },
   "dependencies": {
     "@lottiefiles/react-lottie-player": "^3.6.0",

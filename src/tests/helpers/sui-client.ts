@@ -5,6 +5,7 @@
  */
 
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
+import { decodeSuiPrivateKey } from '@mysten/sui/cryptography';
 import { fromBase64 } from '@mysten/sui/utils';
 import { SuiClient } from '@mysten/sui/client';
 
@@ -38,18 +39,12 @@ export function createKeypair(): Ed25519Keypair {
     throw new Error('PRIVATE_KEY environment variable is not set');
   }
   
-  // Decode the base64 key
-  const decoded = fromBase64(privateKey);
-  
-  // Sui private key format: 1 byte flag + 32 bytes secret + (optionally 32 bytes pubkey)
-  // We only need the first 32 bytes after the flag
-  const secretKey = decoded.slice(1, 33);
-  
-  if (secretKey.length !== 32) {
-    throw new Error(`Invalid secret key length: expected 32 bytes, got ${secretKey.length}`);
-  }
-  
-  return Ed25519Keypair.fromSecretKey(secretKey);
+  const trimmedKey = privateKey.trim();
+  const secretKeyBytes = trimmedKey.startsWith('suiprivkey')
+    ? decodeSuiPrivateKey(trimmedKey).secretKey
+    : fromBase64(trimmedKey);
+
+  return Ed25519Keypair.fromSecretKey(secretKeyBytes);
 }
 
 /**

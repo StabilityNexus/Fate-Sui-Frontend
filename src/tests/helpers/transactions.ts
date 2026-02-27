@@ -310,8 +310,15 @@ export async function getUserBalances(poolId: string, userAddress: string): Prom
       bearTokens: parseU64(result.results[0].returnValues[1][0]),
     };
   }
-  
-  return { bullTokens: BigInt(0), bearTokens: BigInt(0) };
+
+  throw new Error(
+    `Malformed get_user_balances inspect result: ${JSON.stringify(
+      {
+        hasResults: Array.isArray(result.results),
+        returnValues: result.results?.[0]?.returnValues ?? null,
+      }
+    )}`
+  );
 }
 
 /**
@@ -341,6 +348,13 @@ export async function getUserAvgPrices(poolId: string, userAddress: string): Pro
       bearAvgPrice: parseU64(result.results[0].returnValues[1][0]),
     };
   }
-  
-  return { bullAvgPrice: BigInt(0), bearAvgPrice: BigInt(0) };
+
+  throw new Error(
+    `Malformed get_user_avg_prices inspect result: ${JSON.stringify(
+      {
+        hasResults: Array.isArray(result.results),
+        returnValues: result.results?.[0]?.returnValues ?? null,
+      }
+    )}`
+  );
 }

@@ -23,6 +23,13 @@ describe('Token Redemption', () => {
   let initialBullBalance: bigint;
   let initialBearBalance: bigint;
 
+  const ensurePoolId = () => {
+    if (!globalThis.testEnvironmentReady) return;
+    if (!poolId) {
+      throw new Error('Test setup failed: poolId is missing');
+    }
+  };
+
   beforeAll(async () => {
     if (!globalThis.testEnvironmentReady) {
       console.log('⚠️  Skipping redemption tests - environment not ready');
@@ -49,7 +56,8 @@ describe('Token Redemption', () => {
 
   describe('redeem_token (Bull)', () => {
     it('should successfully redeem bull tokens', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       const balances = await getUserBalances(poolId, signerAddress);
@@ -64,7 +72,8 @@ describe('Token Redemption', () => {
     }, 60000);
 
     it('should decrease user bull token balance after redemption', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       
@@ -86,7 +95,8 @@ describe('Token Redemption', () => {
     }, 60000);
 
     it('should decrease bull reserve after redemption', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       // Get initial state
       const initialState = await getPoolState(poolId);
@@ -110,7 +120,8 @@ describe('Token Redemption', () => {
     }, 60000);
 
     it('should return SUI to user on redemption', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       const balances = await getUserBalances(poolId, signerAddress);
@@ -125,14 +136,15 @@ describe('Token Redemption', () => {
       const suiChange = result.balanceChanges?.find(
         (change: any) => change.coinType?.includes('sui::SUI')
       );
-      // User should receive SUI (positive balance change)
-      // Note: This depends on how balance changes are reported
+      expect(suiChange).toBeDefined();
+      expect(BigInt(suiChange.amount ?? suiChange.balanceChange ?? 0)).toBeGreaterThan(BigInt(0));
     }, 60000);
   });
 
   describe('redeem_token (Bear)', () => {
     it('should successfully redeem bear tokens', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       const balances = await getUserBalances(poolId, signerAddress);
@@ -146,7 +158,8 @@ describe('Token Redemption', () => {
     }, 60000);
 
     it('should decrease user bear token balance after redemption', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       
@@ -166,7 +179,8 @@ describe('Token Redemption', () => {
 
   describe('Buy-Sell Cycle', () => {
     it('should maintain balance consistency through buy-sell cycle', async () => {
-      if (!globalThis.testEnvironmentReady || !poolId) return;
+      if (!globalThis.testEnvironmentReady) return;
+      ensurePoolId();
 
       const signerAddress = getSignerAddress();
       
