@@ -49,7 +49,7 @@ export function useSellTokens() {
           ],
         });
 
-        tx.setGasBudget(100_000_00);
+        tx.setGasBudget(100_000_000);
 
         console.log("Executing sell transaction...");
         const result = await signAndExecuteTransaction({ transaction: tx });
