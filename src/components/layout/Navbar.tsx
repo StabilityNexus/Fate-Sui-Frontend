@@ -6,7 +6,7 @@ import Image from "next/image";
 import logoWhite from "../../../public/logo-white.png";
 import { useTheme } from "next-themes";
 import { ModeToggle } from "../darkModeToggle";
-import { ConnectButton } from "@mysten/dapp-kit";
+import { ConnectButton, useCurrentAccount, useSuiClientQuery } from "@mysten/dapp-kit";
 import navLinks from "@/constants/NavLinks";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -16,6 +16,21 @@ const Navbar = () => {
   const [isThemeReady, setIsThemeReady] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const account = useCurrentAccount();
+  const { data: balanceData, isLoading: isBalanceLoading } = useSuiClientQuery(
+    "getBalance",
+    { owner: account?.address ?? "", coinType: "0x2::sui::SUI" },
+    { enabled: !!account?.address }
+  );
+
+  const formatSuiBalance = (mist?: string) => {
+    if (!mist) return "0.000";
+    const amount = BigInt(mist);
+    const whole = amount / 1_000_000_000n;
+    const fraction = amount % 1_000_000_000n;
+    const fractionStr = fraction.toString().padStart(9, "0").slice(0, 3);
+    return `${whole.toString()}.${fractionStr}`;
+  };
 
   useEffect(() => {
     if (resolvedTheme) {
@@ -88,6 +103,15 @@ const Navbar = () => {
 
           {/* Desktop Wallet & Theme */}
           <div className="hidden min-[970px]:flex items-center space-x-3 min-[900px]:space-x-4 flex-shrink-0 min-w-[200px] justify-end">
+            {account?.address && (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-neutral-700">
+                <span className="text-sm font-medium text-black dark:text-white">
+                  {isBalanceLoading
+                    ? "..."
+                    : `${formatSuiBalance(balanceData?.totalBalance)} SUI`}
+                </span>
+              </div>
+            )}
             <ConnectButton />
             <ModeToggle />
           </div>
@@ -152,7 +176,16 @@ const Navbar = () => {
               </nav>
 
               {/* Mobile Wallet & Theme */}
-              <div className="p-3 space-y-2">
+              <div className="p-3 space-y-3">
+                {account?.address && (
+                  <div className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-neutral-700 bg-white dark:bg-neutral-900">
+                    <span className="text-sm font-medium text-black dark:text-white">
+                      {isBalanceLoading
+                        ? "Loading..."
+                        : `${formatSuiBalance(balanceData?.totalBalance)} SUI`}
+                    </span>
+                  </div>
+                )}
                 <ConnectButton />
                 <div className="flex justify-center">
                   <ModeToggle />
