@@ -3,7 +3,7 @@ import "dotenv/config"
 import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 import { fromBase64 } from "@mysten/sui/utils"
 
-import { SuiJsonRpcClient, SuiObjectChange } from '@mysten/sui/jsonRpc';
+import { SuiJsonRpcClient } from '@mysten/sui/jsonRpc';
 import { Transaction } from '@mysten/sui/transactions'
 import path, { dirname } from "path";
 import { execSync } from "child_process";

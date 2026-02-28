@@ -71,7 +71,7 @@ export function useBuyTokens() {
             tx.object(USER_REGISTRY!),
             tx.pure.bool(isBull),
             tx.object(NEXT_SUPRA_ORACLE_HOLDER as string),
-            tx.splitCoins(tx.gas, [tx.pure.u64(Number(amountInMist))]),
+            tx.splitCoins(tx.gas, [tx.pure.u64(amountInMist)]),
           ],
         });
         tx.setGasBudget(100_000_000);

@@ -45,7 +45,7 @@ export function useSellTokens() {
             tx.object(vaultId),  
             tx.object(USER_REGISTRY!),             
             tx.pure.bool(isBull),             
-            tx.pure.u64(Number(tokenAmount)),         
+            tx.pure.u64(tokenAmount),         
             tx.object(NEXT_SUPRA_ORACLE_HOLDER),   
           ],
         });

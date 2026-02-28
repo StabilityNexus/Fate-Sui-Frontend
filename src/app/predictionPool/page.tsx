@@ -103,11 +103,6 @@ const ExploreFatePools = () => {
     }
 
     try {
-      const client = new SuiJsonRpcClient({
-        url: "https://fullnode.testnet.sui.io:443",
-        network: "testnet",
-      });
-
       const registryObject = await client.getObject({
         id: POOL_REGISTRY_ID,
         options: { showContent: true },

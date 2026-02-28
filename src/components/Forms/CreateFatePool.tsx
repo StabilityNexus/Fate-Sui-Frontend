@@ -169,7 +169,18 @@ export default function CreateFatePoolForm() {
         return;
       }
 
-      const assetAddress = "0x0000000000000000000000000000000000000000000000000000000000000000";
+      const assetAddress = formData.assetAddress?.trim();
+      const ethAddressPattern = /^0x[a-fA-F0-9]{40}$/;
+      if (!assetAddress) {
+        toast.error("Asset address is required.");
+        setIsSubmitting(false);
+        return;
+      }
+      if (!ethAddressPattern.test(assetAddress)) {
+        toast.error("Asset address must be a valid Ethereum address.");
+        setIsSubmitting(false);
+        return;
+      }
       const FEE_NUMERATOR = 1000;
 
       const protocolFee = BigInt(
@@ -206,7 +217,7 @@ export default function CreateFatePoolForm() {
 
       const tx = new Transaction();
 
-      const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(Number(initialSuiAmount))]);
+      const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(initialSuiAmount)]);
 
       tx.moveCall({
         target: `${PACKAGE_ID}::prediction_pool::create_pool`,
@@ -217,10 +228,10 @@ export default function CreateFatePoolForm() {
           tx.pure.vector("u8", strToU8Vec(poolDescription)),
           tx.pure.u32(pairId),
           tx.pure.address(assetAddress),
-          tx.pure.u64(Number(protocolFee)),
-          tx.pure.u64(Number(mintFee)),
-          tx.pure.u64(Number(burnFee)),
-          tx.pure.u64(Number(poolCreatorFee)),
+          tx.pure.u64(protocolFee),
+          tx.pure.u64(mintFee),
+          tx.pure.u64(burnFee),
+          tx.pure.u64(poolCreatorFee),
           tx.pure.address(poolCreator),
           tx.pure.vector("u8", strToU8Vec(bullTokenName)),
           tx.pure.vector("u8", strToU8Vec(bullTokenSymbol)),
