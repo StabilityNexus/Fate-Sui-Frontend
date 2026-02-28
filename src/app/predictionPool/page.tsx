@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { useRouter } from "next/navigation";
 import { Token } from "@/types/Token";
 import { Pool } from "@/types/Pool";
@@ -77,7 +77,7 @@ const ExploreFatePools = () => {
 
   const router = useRouter();
   const client = useMemo(
-    () => new SuiClient({ url: "https://fullnode.testnet.sui.io" }),
+    () => new SuiJsonRpcClient({ url: "https://fullnode.testnet.sui.io", network: "testnet" }),
     []
   );
 
@@ -103,10 +103,6 @@ const ExploreFatePools = () => {
     }
 
     try {
-      const client = new SuiClient({
-        url: "https://fullnode.testnet.sui.io:443",
-      });
-
       const registryObject = await client.getObject({
         id: POOL_REGISTRY_ID,
         options: { showContent: true },

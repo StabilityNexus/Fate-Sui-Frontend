@@ -18,7 +18,7 @@ import ReviewStep from "./Steps/ReviewStep";
 import StepIndicator from "./Steps/StepIndicator";
 import type { FormData } from "@/types/FormData";
 import { Transaction } from "@mysten/sui/transactions";
-import { useWallet } from "@suiet/wallet-kit";
+import { useCurrentAccount, useSignAndExecuteTransaction } from "@mysten/dapp-kit";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
@@ -27,7 +27,8 @@ type FormErrors = Partial<Record<keyof FormData, string>>;
 
 export default function CreateFatePoolForm() {
   const router = useRouter();
-  const { account, signAndExecuteTransaction } = useWallet();
+  const account = useCurrentAccount();
+  const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -161,15 +162,25 @@ export default function CreateFatePoolForm() {
     try {
       const poolName = formData.poolName?.trim() || "Default Pool";
       const poolDescription = formData.poolDescription?.trim() || "";
-      const pairId = Number(formData.pairId) || 18;
+      const pairId = formData.pairId !== '' ? Number(formData.pairId) : 18;
       if (!Number.isFinite(pairId) || pairId < 0 || pairId > 0xffffffff) {
         toast.error("Invalid pair id. Provide a numeric pairId (u32).");
         setIsSubmitting(false);
         return;
       }
 
-      const assetAddress =
-        formData.pairId || "0x0000000000000000000000000000000000000000";
+      const assetAddress = formData.assetAddress?.trim();
+      const ethAddressPattern = /^0x[a-fA-F0-9]{40}$/;
+      if (!assetAddress) {
+        toast.error("Asset address is required.");
+        setIsSubmitting(false);
+        return;
+      }
+      if (!ethAddressPattern.test(assetAddress)) {
+        toast.error("Asset address must be a valid Ethereum address.");
+        setIsSubmitting(false);
+        return;
+      }
       const FEE_NUMERATOR = 1000;
 
       const protocolFee = BigInt(
@@ -234,6 +245,23 @@ export default function CreateFatePoolForm() {
       tx.setGasBudget(100_000_000);
 
       console.log("Submitting create_pool tx...");
+      console.log("Transaction args:", {
+        poolName,
+        poolDescription,
+        pairId,
+        assetAddress,
+        protocolFee: protocolFee.toString(),
+        mintFee: mintFee.toString(),
+        burnFee: burnFee.toString(),
+        poolCreatorFee: poolCreatorFee.toString(),
+        poolCreator,
+        bullTokenName,
+        bullTokenSymbol,
+        bearTokenName,
+        bearTokenSymbol,
+        initialSuiAmount: initialSuiAmount.toString(),
+      });
+
       const result = await signAndExecuteTransaction({ transaction: tx });
 
       console.log("Pool created successfully:", result);
