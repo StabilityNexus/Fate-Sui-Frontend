@@ -23,14 +23,33 @@ const Navbar = () => {
     { enabled: !!account?.address }
   );
 
-  const formatSuiBalance = (mist?: string) => {
-    if (!mist) return "0.000";
-    const amount = BigInt(mist);
+  const formatSuiBalance = (mist?: string | null) => {
+    if (mist === undefined || mist === null) return null;
+    const trimmed = mist.trim();
+    if (!/^[0-9]+$/.test(trimmed)) return null;
+    let amount: bigint;
+    try {
+      amount = BigInt(trimmed);
+    } catch {
+      return null;
+    }
     const whole = amount / 1_000_000_000n;
     const fraction = amount % 1_000_000_000n;
     const fractionStr = fraction.toString().padStart(9, "0").slice(0, 3);
     return `${whole.toString()}.${fractionStr}`;
   };
+
+  const formattedBalance = formatSuiBalance(balanceData?.totalBalance);
+  const desktopBalanceLabel = isBalanceLoading
+    ? "..."
+    : formattedBalance
+      ? `${formattedBalance} SUI`
+      : "Unavailable";
+  const mobileBalanceLabel = isBalanceLoading
+    ? "Loading..."
+    : formattedBalance
+      ? `${formattedBalance} SUI`
+      : "Unavailable";
 
   useEffect(() => {
     if (resolvedTheme) {
@@ -105,10 +124,8 @@ const Navbar = () => {
           <div className="hidden min-[970px]:flex items-center space-x-3 min-[900px]:space-x-4 flex-shrink-0 min-w-[200px] justify-end">
             {account?.address && (
               <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-neutral-700">
-                <span className="text-sm font-medium text-black dark:text-white">
-                  {isBalanceLoading
-                    ? "..."
-                    : `${formatSuiBalance(balanceData?.totalBalance)} SUI`}
+                <span className="text-sm font-medium text-white">
+                  {desktopBalanceLabel}
                 </span>
               </div>
             )}
@@ -119,7 +136,7 @@ const Navbar = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="max-[980px]:block hidden p-2 rounded text-white hover:bg-neutral-800 transition-colors"
+            className="min-[970px]:hidden block p-2 rounded text-white hover:bg-neutral-800 transition-colors"
             aria-label="Toggle mobile menu"
           >
             {isMobileMenuOpen ? (
@@ -133,13 +150,13 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-40 max-[699px]:block hidden">
+        <div className="fixed inset-0 z-40 min-[970px]:hidden block">
           <div
             className="fixed inset-0 bg-black bg-opacity-50"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="fixed top-0 right-0 h-full w-64 bg-black shadow-xl">
-            <div className="flex flex-col h-full">
+          <div className="fixed top-0 right-0 h-full w-[280px] sm:w-72 bg-black shadow-xl overflow-hidden">
+            <div className="flex flex-col h-full overflow-y-auto">
               {/* Mobile Menu Header */}
               <div className="flex items-center justify-between p-4">
                 <span className="text-white font-medium">Menu</span>
@@ -176,18 +193,18 @@ const Navbar = () => {
               </nav>
 
               {/* Mobile Wallet & Theme */}
-              <div className="p-3 space-y-3">
+              <div className="p-4 space-y-3 border-t border-neutral-800">
                 {account?.address && (
-                  <div className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-neutral-700 bg-white dark:bg-neutral-900">
-                    <span className="text-sm font-medium text-black dark:text-white">
-                      {isBalanceLoading
-                        ? "Loading..."
-                        : `${formatSuiBalance(balanceData?.totalBalance)} SUI`}
+                  <div className="flex items-center justify-center px-3 py-2.5 rounded-xl border border-neutral-700 bg-neutral-900 w-full">
+                    <span className="text-sm font-medium text-white">
+                      {mobileBalanceLabel}
                     </span>
                   </div>
                 )}
-                <ConnectButton />
-                <div className="flex justify-center">
+                <div className="w-full [&>button]:w-full [&>button]:justify-center">
+                  <ConnectButton />
+                </div>
+                <div className="flex justify-center pt-1">
                   <ModeToggle />
                 </div>
               </div>
