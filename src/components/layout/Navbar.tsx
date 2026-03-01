@@ -150,7 +150,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-40 min-[970px]:hidden block">
+        <div className="fixed inset-0 z-[60] min-[970px]:hidden block">
           <div
             className="fixed inset-0 bg-black bg-opacity-50"
             onClick={() => setIsMobileMenuOpen(false)}
