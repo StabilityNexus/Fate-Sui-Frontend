@@ -8,7 +8,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "tsx src/utils/scripts/deploy.ts"
+    "deploy": "tsx src/utils/scripts/deploy.ts",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:pool": "vitest run src/tests/pool",
+    "test:trading": "vitest run src/tests/trading",
+    "test:rebalancing": "vitest run src/tests/rebalancing",
+    "test:edge-cases": "vitest run src/tests/edge-cases",
+    "test:portfolio": "vitest run src/tests/portfolio"
   },
   "dependencies": {
     "@lottiefiles/react-lottie-player": "^3.6.0",
@@ -52,12 +60,14 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/ui": "^3.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
     "postcss": "^8",
     "sass": "^1.89.2",
     "tailwindcss": "^3.4.1",
     "tsx": "^4.19.4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.0.0"
   }
 }
