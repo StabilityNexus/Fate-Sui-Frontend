@@ -1,8 +1,7 @@
 "use client";
 import { useCallback } from "react";
-import { SuiClient } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
-import { useWallet } from "@suiet/wallet-kit";
+import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit";
 import toast from "react-hot-toast";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
 
@@ -13,7 +12,9 @@ interface PredictionPool {
 }
 
 export function useDistribute() {
-  const { account, signAndExecuteTransaction } = useWallet();
+  const account = useCurrentAccount();
+  const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const suiClient = useSuiClient();
 
   const distribute = useCallback(
     async (pool: PredictionPool) => {
@@ -39,10 +40,6 @@ export function useDistribute() {
         console.log("Starting outcome settlement...", {
           poolId: pool.id,
           creator: pool.pool_creator,
-        });
-
-        const suiClient = new SuiClient({
-          url: "https://fullnode.testnet.sui.io:443",
         });
 
         const coins = await suiClient.getCoins({
@@ -103,7 +100,7 @@ export function useDistribute() {
         toast.error(`Outcome settlement failed: ${errorMessage}`);
       }
     },
-    [account?.address, signAndExecuteTransaction]
+    [account?.address, signAndExecuteTransaction, suiClient]
   );
 
   return { distribute };

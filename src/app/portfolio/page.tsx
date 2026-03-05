@@ -30,12 +30,13 @@ import Navbar from "@/components/layout/Navbar";
 import StickyCursor from "@/components/StickyCursor";
 import { usePool } from "@/fateHooks/usePool";
 import { bcs } from "@mysten/sui/bcs";
-import { SuiClient } from "@mysten/sui/client";
+import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { Transaction } from "@mysten/sui/transactions";
-import { useWallet } from "@suiet/wallet-kit";
+import { useCurrentAccount } from "@mysten/dapp-kit";
 import { useRouter } from "next/navigation";
 import AppLoader from "@/components/Loader";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
+import { getNetworkConfig } from "@/config/network";
 
 const PACKAGE_ID = PROTOCOL_ADDRESSES_TESTNET.PACKAGE_ID;
 const USER_REGISTRY = PROTOCOL_ADDRESSES_TESTNET.USER_REGISTRY;
@@ -558,7 +559,7 @@ const PoolDataLoader = ({
 
 // Main component
 export default function PortfolioPage() {
-  const { account } = useWallet();
+  const account = useCurrentAccount();
   const stickyRef = useRef<HTMLElement | null>(null);
   const [showBullDistribution, setShowBullDistribution] = useState(false);
   const [showBearDistribution, setShowBearDistribution] = useState(false);
@@ -575,9 +576,7 @@ export default function PortfolioPage() {
 
     try {
       console.log("Fetching pools for address:", account.address);
-      const client = new SuiClient({
-        url: "https://fullnode.testnet.sui.io:443",
-      });
+      const client = new SuiJsonRpcClient(getNetworkConfig());
 
       // First, check if user exists
       const checkUserTx = new Transaction();
