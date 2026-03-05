@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import {
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
   useMemo,
   useRef,
   useState,
@@ -368,11 +363,13 @@ const ExploreFatePools = () => {
 
   const availableAssets = useMemo(() => {
     const assets = new Set(
-      pools.map((pool: { asset_id: any }) => pool.asset_id).filter(Boolean)
+      pools
+        .map((pool: { asset_id: any }) => pool.asset_id)
+        .filter((id: string) => Boolean(id) && id !== UNKNOWN_ASSET_ID)
     );
     return Array.from(assets).map((address) => ({
       address,
-      ...(ASSET_CONFIG[Number(address)] || { name: "Unknown", symbol: "UNK" }),
+      ...(ASSET_CONFIG[address] || { name: address, symbol: "?" }),
     }));
   }, [pools]);
 
@@ -584,129 +581,66 @@ const ExploreFatePools = () => {
                       </tr>
                     ))
                   ) : filteredPools.length > 0 ? (
-                    filteredPools.map(
-                      (pool: {
-                        id: boolean | Key | null | undefined;
-                        name:
-                        | string
-                        | number
-                        | bigint
-                        | boolean
-                        | ReactElement<
-                          unknown,
-                          string | JSXElementConstructor<any>
-                        >
-                        | Iterable<ReactNode>
-                        | ReactPortal
-                        | Promise<
-                          | string
-                          | number
-                          | bigint
-                          | boolean
-                          | ReactPortal
-                          | ReactElement<
-                            unknown,
-                            string | JSXElementConstructor<any>
-                          >
-                          | Iterable<ReactNode>
-                          | null
-                          | undefined
-                        >
-                        | null
-                        | undefined;
-                        description: any;
-                        asset_name:
-                        | string
-                        | number
-                        | bigint
-                        | boolean
-                        | ReactElement<
-                          unknown,
-                          string | JSXElementConstructor<any>
-                        >
-                        | Iterable<ReactNode>
-                        | ReactPortal
-                        | Promise<
-                          | string
-                          | number
-                          | bigint
-                          | boolean
-                          | ReactPortal
-                          | ReactElement<
-                            unknown,
-                            string | JSXElementConstructor<any>
-                          >
-                          | Iterable<ReactNode>
-                          | null
-                          | undefined
-                        >
-                        | null
-                        | undefined;
-                        total_liquidity: number;
-                        bull_reserve: number;
-                        bear_reserve: number;
-                        bullPercentage: number;
-                        bearPercentage: number;
-                      }) => (
-                        <tr
-                          key={Number(pool.id)}
-                          className="hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors cursor-pointer"
-                          onClick={() =>
-                            router.push(
-                              `/predictionPool/pool?id=${encodeURIComponent(
-                                String(pool.id)
-                              )}`
-                            )
-                          }
-                        >
-                          <td className="px-6 py-4">
-                            <div>
-                              <div className="font-medium text-black dark:text-white">
-                                {pool.name}
-                              </div>
-                              <div className="text-sm text-neutral-600 dark:text-neutral-400 truncate max-w-xs">
-                                {pool.description || "No description"}
-                              </div>
+                    filteredPools.map((pool: EnhancedPool) => (
+                      <tr
+                        key={Number(pool.id)}
+                        className="hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors cursor-pointer"
+                        onClick={() =>
+                          router.push(
+                            `/predictionPool/pool?id=${encodeURIComponent(
+                              String(pool.id)
+                            )}`
+                          )
+                        }
+                      >
+                        <td className="px-6 py-4">
+                          <div>
+                            <div className="font-medium text-black dark:text-white">
+                              {pool.name}
                             </div>
-                          </td>
+                            <div className="text-sm text-neutral-600 dark:text-neutral-400 truncate max-w-xs">
+                              {pool.description || "No description"}
+                            </div>
+                          </div>
+                        </td>
 
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">
-                                {pool.asset_name}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">
+                              {pool.asset_name}
+                            </span>
+                          </div>
+                        </td>
+
+                        <td className="px-6 py-4">
+                          <div className="font-medium">
+                            {formatNumber(pool.total_liquidity)}
+                          </div>
+                          <div className="text-xs text-neutral-500">
+                            BULL: {formatNumber(pool.bull_reserve)} | BEAR:{" "}
+                            {formatNumber(pool.bear_reserve)}
+                          </div>
+                        </td>
+
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1">
+                              <TrendingUp className="w-4 h-4 text-black dark:text-gray-600" />
+                              <span className="text-sm font-medium text-black dark:text-gray-600">
+                                {pool.bullPercentage.toFixed(1)}%
                               </span>
                             </div>
-                          </td>
-
-                          <td className="px-6 py-4">
-                            <div className="font-medium">
-                              {formatNumber(pool.total_liquidity)}
+                            <span className="text-neutral-400">/</span>
+                            <div className="flex items-center gap-1">
+                              <TrendingDown className="w-4 h-4 text-gray-400 dark:text-white" />
+                              <span className="text-sm font-medium text-gray-400 dark:text-white">
+                                {pool.bearPercentage.toFixed(1)}%
+                              </span>
                             </div>
-                            <div className="text-xs text-neutral-500">
-                              BULL: {formatNumber(pool.bull_reserve)} | BEAR:{" "}
-                              {formatNumber(pool.bear_reserve)}
-                            </div>
-                          </td>
-
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-2">
-                              <div className="flex items-center gap-1">
-                                <TrendingUp className="w-4 h-4 text-black dark:text-gray-600" />
-                                <span className="text-sm font-medium text-black dark:text-gray-600">
-                                  {pool.bullPercentage.toFixed(1)}%
-                                </span>
-                              </div>
-                              <span className="text-neutral-400">/</span>
-                              <div className="flex items-center gap-1">
-                                <TrendingDown className="w-4 h-4 text-gray-400 dark:text-white" />
-                                <span className="text-sm font-medium text-gray-400 dark:text-white">
-                                  {pool.bearPercentage.toFixed(1)}%
-                                </span>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      )
+                          </div>
+                        </td>
+                      </tr>
+                    )
                     )
                   ) : (
                     <tr>
@@ -715,14 +649,14 @@ const ExploreFatePools = () => {
                           <div className="text-lg text-neutral-600 dark:text-neutral-400">
                             {searchQuery ||
                               Object.values(filters).some(
-                                (f) => f !== "" && f !== 0
+                                (f) => f !== "" && f !== 0 && f !== null && f !== undefined
                               )
                               ? "No pools match your filters"
                               : "No prediction pools found"}
                           </div>
                           {!searchQuery &&
                             Object.values(filters).every(
-                              (f) => f === "" || f === 0
+                              (f) => f === "" || f === 0 || f === null || f === undefined
                             ) && (
                               <button
                                 className="px-6 py-3 bg-black text-white dark:bg-white dark:text-black rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all"
