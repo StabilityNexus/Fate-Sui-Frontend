@@ -1,14 +1,14 @@
 <!-- Don't delete it -->
 <div name="readme-top"></div>
 
-<div align="center" style="position: relative; width:175px; margin:auto;">
+<div align="center" style="width:175px; margin:auto;">
 
   <img 
     alt="Fate Protocol" 
     src="public/Animated/logo-animated.gif" 
     width="175"
-    style="position:absolute; top:0; left:0;"
   />
+</div>
 
 </div>
 
