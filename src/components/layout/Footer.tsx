@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-
+import FooterCopyright from "../FooterCopyright"
 interface IconProps extends React.SVGProps<SVGSVGElement> {
   className?: string
 }
@@ -132,7 +132,7 @@ export default function Footer() {
         </Link>
       </div>
           <div className='flex flex-wrap items-center gap-6 text-sm text-muted-foreground text-center'>
-             © 2023-2025 The Stable Order. All rights reserved.
+              <FooterCopyright />
           </div>
 
           {/* Social Media Links */}
