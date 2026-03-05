@@ -36,6 +36,7 @@ import { useCurrentAccount } from "@mysten/dapp-kit";
 import { useRouter } from "next/navigation";
 import AppLoader from "@/components/Loader";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
+import { getNetworkConfig } from "@/config/network";
 
 const PACKAGE_ID = PROTOCOL_ADDRESSES_TESTNET.PACKAGE_ID;
 const USER_REGISTRY = PROTOCOL_ADDRESSES_TESTNET.USER_REGISTRY;
@@ -575,10 +576,7 @@ export default function PortfolioPage() {
 
     try {
       console.log("Fetching pools for address:", account.address);
-      const client = new SuiJsonRpcClient({
-        url: "https://fullnode.testnet.sui.io:443",
-        network: "testnet",
-      });
+      const client = new SuiJsonRpcClient(getNetworkConfig());
 
       // First, check if user exists
       const checkUserTx = new Transaction();

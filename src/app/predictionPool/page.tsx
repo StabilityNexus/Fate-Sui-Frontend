@@ -38,6 +38,7 @@ import { ASSET_CONFIG } from "@/config/assets";
 import { bcs } from "@mysten/sui/bcs";
 import toast from "react-hot-toast";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
+import { getNetworkConfig } from "@/config/network";
 
 interface EnhancedPool extends Pool {
   total_fees: number;
@@ -77,7 +78,7 @@ const ExploreFatePools = () => {
 
   const router = useRouter();
   const client = useMemo(
-    () => new SuiJsonRpcClient({ url: "https://fullnode.testnet.sui.io", network: "testnet" }),
+    () => new SuiJsonRpcClient(getNetworkConfig()),
     []
   );
 

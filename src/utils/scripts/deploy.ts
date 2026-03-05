@@ -17,10 +17,9 @@ if (!priv_key) {
 }
 const keypair = Ed25519Keypair.fromSecretKey(fromBase64(priv_key).slice(1));
 const path_to_contracts = path.join(dirname(fileURLToPath(import.meta.url)), "../contracts")
-const client = new SuiJsonRpcClient({
-    url: 'https://fullnode.testnet.sui.io',
-    network: 'testnet',
-});
+import { getNetworkConfig } from '../../config/network';
+
+const client = new SuiJsonRpcClient(getNetworkConfig());
 
 
 console.log("Building contracts")

@@ -5,6 +5,7 @@ import { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import { Transaction } from "@mysten/sui/transactions";
 import Decimal from "decimal.js";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
+import { getNetworkConfig } from "@/config/network";
 
 interface TokenFields {
   id: {
@@ -263,10 +264,7 @@ export const usePool = (
     setError(null);
 
     try {
-      const client = new SuiJsonRpcClient({
-        url: "https://fullnode.testnet.sui.io:443",
-        network: "testnet",
-      });
+      const client = new SuiJsonRpcClient(getNetworkConfig());
       const objectID = decodeURIComponent(id);
 
       console.log("Fetching pool object:", objectID);

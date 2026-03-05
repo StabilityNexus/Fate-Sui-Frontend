@@ -245,22 +245,7 @@ export default function CreateFatePoolForm() {
       tx.setGasBudget(100_000_000);
 
       console.log("Submitting create_pool tx...");
-      console.log("Transaction args:", {
-        poolName,
-        poolDescription,
-        pairId,
-        assetAddress,
-        protocolFee: protocolFee.toString(),
-        mintFee: mintFee.toString(),
-        burnFee: burnFee.toString(),
-        poolCreatorFee: poolCreatorFee.toString(),
-        poolCreator,
-        bullTokenName,
-        bullTokenSymbol,
-        bearTokenName,
-        bearTokenSymbol,
-        initialSuiAmount: initialSuiAmount.toString(),
-      });
+      
 
       const result = await signAndExecuteTransaction({ transaction: tx });
 

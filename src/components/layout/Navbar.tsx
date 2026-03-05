@@ -33,8 +33,9 @@ const Navbar = () => {
     } catch {
       return null;
     }
-    const whole = amount / 1_000_000_000n;
-    const fraction = amount % 1_000_000_000n;
+    const divisor = BigInt(1_000_000_000);
+    const whole = amount / divisor;
+    const fraction = amount % divisor;
     const fractionStr = fraction.toString().padStart(9, "0").slice(0, 3);
     return `${whole.toString()}.${fractionStr}`;
   };
@@ -150,7 +151,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[60] min-[970px]:hidden block">
+        <div className="fixed inset-0 z-[60] min-[970px]:hidden block"> 
           <div
             className="fixed inset-0 bg-black bg-opacity-50"
             onClick={() => setIsMobileMenuOpen(false)}
