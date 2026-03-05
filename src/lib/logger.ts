@@ -1,6 +1,6 @@
 /* Dev-only logger utility. */
 
-const isDev = process.env.NODE_ENV === "development";
+import { isDev } from "@/config/env";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const log = (...args: any[]): void => {
