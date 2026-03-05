@@ -10,7 +10,7 @@
 
   <img alt="Stability Nexus" src="public/stability.svg" width="175">
 
-  <img src="public/logo.png" width="175" />
+  
 
 </div>
 
