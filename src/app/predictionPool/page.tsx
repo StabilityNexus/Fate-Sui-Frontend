@@ -58,6 +58,8 @@ interface FilterState {
   creator: string;
 }
 
+const UNKNOWN_ASSET_ID = "unknown";
+
 const ExploreFatePools = () => {
   const stickyRef = useRef<HTMLElement | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -195,7 +197,7 @@ const ExploreFatePools = () => {
       const description = fields.description || "";
       const currentPrice = toIntSafe(fields.current_price, 0);
       const assetAddress =
-        fields.pair_id || bytesToHex0x(fields.asset_id) || "";
+        fields.pair_id || bytesToHex0x(fields.asset_id) || UNKNOWN_ASSET_ID;
       const creator = fields.pool_creator || "";
 
       // Calculate reserves and fees
@@ -281,8 +283,8 @@ const ExploreFatePools = () => {
     queryKey: ["poolIds", PACKAGE_ID, POOL_REGISTRY_ID, '0x9bca5a227e7e4dfa48927ec6583b19aac55c29f00a39330aec60356a101886ba'],
     queryFn: fetchPoolsFromRegistry,
     enabled: !!(PACKAGE_ID && POOL_REGISTRY_ID),
-    staleTime: 5 * 60 * 1000, 
-    gcTime: 10 * 60 * 1000, 
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
     retry: 2,
     refetchOnWindowFocus: false,
   });
@@ -366,7 +368,7 @@ const ExploreFatePools = () => {
 
   const availableAssets = useMemo(() => {
     const assets = new Set(
-      pools.map((pool: { asset_id: any }) => pool.asset_id)
+      pools.map((pool: { asset_id: any }) => pool.asset_id).filter(Boolean)
     );
     return Array.from(assets).map((address) => ({
       address,
@@ -467,8 +469,8 @@ const ExploreFatePools = () => {
                           <SelectItem value="all">All Price</SelectItem>
                           {availableAssets.map((asset) => (
                             <SelectItem
-                              key={Number(asset.address)}
-                              value={String(asset.address)}
+                              key={asset.address}
+                              value={asset.address}
                             >
                               {asset.name}
                             </SelectItem>
@@ -586,60 +588,60 @@ const ExploreFatePools = () => {
                       (pool: {
                         id: boolean | Key | null | undefined;
                         name:
+                        | string
+                        | number
+                        | bigint
+                        | boolean
+                        | ReactElement<
+                          unknown,
+                          string | JSXElementConstructor<any>
+                        >
+                        | Iterable<ReactNode>
+                        | ReactPortal
+                        | Promise<
                           | string
                           | number
                           | bigint
                           | boolean
-                          | ReactElement<
-                              unknown,
-                              string | JSXElementConstructor<any>
-                            >
-                          | Iterable<ReactNode>
                           | ReactPortal
-                          | Promise<
-                              | string
-                              | number
-                              | bigint
-                              | boolean
-                              | ReactPortal
-                              | ReactElement<
-                                  unknown,
-                                  string | JSXElementConstructor<any>
-                                >
-                              | Iterable<ReactNode>
-                              | null
-                              | undefined
-                            >
+                          | ReactElement<
+                            unknown,
+                            string | JSXElementConstructor<any>
+                          >
+                          | Iterable<ReactNode>
                           | null
-                          | undefined;
+                          | undefined
+                        >
+                        | null
+                        | undefined;
                         description: any;
                         asset_name:
+                        | string
+                        | number
+                        | bigint
+                        | boolean
+                        | ReactElement<
+                          unknown,
+                          string | JSXElementConstructor<any>
+                        >
+                        | Iterable<ReactNode>
+                        | ReactPortal
+                        | Promise<
                           | string
                           | number
                           | bigint
                           | boolean
-                          | ReactElement<
-                              unknown,
-                              string | JSXElementConstructor<any>
-                            >
-                          | Iterable<ReactNode>
                           | ReactPortal
-                          | Promise<
-                              | string
-                              | number
-                              | bigint
-                              | boolean
-                              | ReactPortal
-                              | ReactElement<
-                                  unknown,
-                                  string | JSXElementConstructor<any>
-                                >
-                              | Iterable<ReactNode>
-                              | null
-                              | undefined
-                            >
+                          | ReactElement<
+                            unknown,
+                            string | JSXElementConstructor<any>
+                          >
+                          | Iterable<ReactNode>
                           | null
-                          | undefined;
+                          | undefined
+                        >
+                        | null
+                        | undefined;
                         total_liquidity: number;
                         bull_reserve: number;
                         bear_reserve: number;
@@ -712,9 +714,9 @@ const ExploreFatePools = () => {
                         <div className="flex flex-col items-center gap-4">
                           <div className="text-lg text-neutral-600 dark:text-neutral-400">
                             {searchQuery ||
-                            Object.values(filters).some(
-                              (f) => f !== "" && f !== 0
-                            )
+                              Object.values(filters).some(
+                                (f) => f !== "" && f !== 0
+                              )
                               ? "No pools match your filters"
                               : "No prediction pools found"}
                           </div>
