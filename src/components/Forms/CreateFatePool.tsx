@@ -302,7 +302,7 @@ export default function CreateFatePoolForm() {
   return (
     <div className="max-w-4xl mx-auto p-4 dark:bg-black bg-white">
       <div className="bg-white dark:bg-black p-6 rounded-xl my-10">
-        <Card className="shadow-lg bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700">
+        <Card className="shadow-lg bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700 overflow-hidden">
           <CardHeader className="border-b border-neutral-200 dark:border-neutral-700">
             <CardTitle className="text-2xl font-bold text-black dark:text-white">
               Create Fate Pool

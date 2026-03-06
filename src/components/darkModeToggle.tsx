@@ -12,8 +12,9 @@ export function ModeToggle() {
         <Button
             size="icon"
             style={{
-                borderRadius: "50px",
-                width: "3rem",
+                borderRadius: "0.75rem",
+                width: "44px",
+                height: "44px",
                 backgroundColor: resolvedTheme === "dark" ? "#230402" : "white",
                 border: resolvedTheme === "dark" ? "2px solid white" : "2px solid black",
             }}
@@ -27,6 +28,7 @@ export function ModeToggle() {
             ) : (
                 <Sun
                     className="h-[1.2rem] w-[1.5rem] transition-transform rotate-0 scale-100"
+                    style={{ color: "black" }}
                 />
             )}
         </Button>

@@ -42,10 +42,60 @@ const Navbar = () => {
     };
   }, [isMobileMenuOpen]);
 
+  // Close mobile menu when viewport crosses the lg breakpoint (1024px)
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (e.matches) setIsMobileMenuOpen(false);
+    };
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
   if (!isThemeReady) return null;
 
   return (
     <>
+      {/* Wallet Kit modal alignment — injected after bundle to guarantee cascade win */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .wkit-select__scroll {
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+          padding-right: 0 !important;
+        }
+        .wkit-select__title {
+          margin-left: 0 !important;
+          padding-left: 6px !important;
+        }
+        .wkit-select-item {
+          padding: 8px 6px !important;
+          gap: 12px !important;
+          border-radius: 12px !important;
+          align-items: center !important;
+          display: flex !important;
+        }
+        .wkit-select-item__icon {
+          width: 36px !important;
+          min-width: 36px !important;
+          height: 36px !important;
+          flex-shrink: 0 !important;
+          margin-right: 0 !important;
+          border-radius: 8px !important;
+          overflow: hidden !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+        .wkit-select-item__icon-img {
+          width: 36px !important;
+          height: 36px !important;
+          min-width: 36px !important;
+          flex-shrink: 0 !important;
+          border-radius: 8px !important;
+          object-fit: contain !important;
+          display: block !important;
+        }
+      `}} />
       <header className="justify-between p-2 sm:p-3 bg-black sticky top-0 z-50">
         <div className="mx-auto flex items-center justify-between relative px-3 sm:px-5 bg-black">
           {/* Logo */}
@@ -66,7 +116,7 @@ const Navbar = () => {
 
           {/* Desktop Nav Links */}
           <nav
-            className="hidden min-[900px]:flex absolute left-1/2 transform -translate-x-1/2 space-x-6 xl:space-x-8 text-md text-center px-6 xl:px-8 py-2 rounded-full bg-opacity-[10%] bg-black"
+            className="hidden lg:flex absolute left-1/2 transform -translate-x-1/2 space-x-6 xl:space-x-8 text-md text-center px-6 xl:px-8 py-2 rounded-full bg-opacity-[10%] bg-black"
             style={{ fontFamily: "var(--font-bebas-nueue)" }}
           >
             {navLinks.map(({ label, href }) => {
@@ -75,11 +125,10 @@ const Navbar = () => {
                 <Link
                   key={label}
                   href={href}
-                  className={`hover:text-neutral-400 transition-all duration-200 ${
-                    isActive
-                      ? "border-b-2 border-white pb-1 text-white"
-                      : "text-neutral-300"
-                  }`}
+                  className={`hover:text-neutral-400 transition-all duration-200 ${isActive
+                    ? "border-b-2 border-white pb-1 text-white"
+                    : "text-neutral-300"
+                    }`}
                 >
                   {label}
                 </Link>
@@ -88,23 +137,15 @@ const Navbar = () => {
           </nav>
 
           {/* Desktop Wallet & Theme */}
-          <div className="hidden min-[970px]:flex items-center space-x-3 min-[900px]:space-x-4 flex-shrink-0 min-w-[200px] justify-end">
-            <ConnectButton
-              className={`font-medium rounded-full transition-colors text-sm ${
-                resolvedTheme === "dark"
-                  ? "bg-white text-black hover:bg-neutral-200"
-                  : "bg-black text-white hover:bg-neutral-200"
-              }`}
-            >
-              Connect Wallet
-            </ConnectButton>
+          <div className="hidden lg:flex items-center space-x-4 flex-shrink-0 justify-end ml-auto wkit-desktop-wrapper">
+            <ConnectButton />
             <ModeToggle />
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="max-[980px]:block hidden p-2 rounded text-white hover:bg-neutral-800 transition-colors"
+            className="lg:hidden block p-2 rounded text-white hover:bg-neutral-800 transition-colors"
             aria-label="Toggle mobile menu"
           >
             {isMobileMenuOpen ? (
@@ -118,16 +159,17 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-40 max-[699px]:block hidden">
+        <div className="fixed inset-0 z-[60] lg:hidden">
           <div
             className="fixed inset-0 bg-black bg-opacity-50"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="fixed top-0 right-0 h-full w-64 bg-black shadow-xl">
-            <div className="flex flex-col h-full">
-              {/* Mobile Menu Header */}
-              <div className="flex items-center justify-between p-4">
-                <span className="text-white font-medium">Menu</span>
+          <div className="fixed top-0 right-0 h-[100dvh] w-[280px] sm:w-80 bg-black shadow-xl border-l border-neutral-800 flex flex-col overflow-y-auto">
+            {/* Mobile Menu Header */}
+            <div className="flex items-center justify-between p-4 border-b border-neutral-800">
+              <span className="text-white font-medium">Menu</span>
+              <div className="flex items-center space-x-2">
+                <ModeToggle />
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-1 rounded text-white hover:bg-neutral-800"
@@ -135,46 +177,34 @@ const Navbar = () => {
                   <X className="w-5 h-5" />
                 </button>
               </div>
+            </div>
 
-              {/* Mobile Nav Links */}
-              <nav className="flex-1 px-4 py-2">
-                <div className="space-y-2">
-                  {navLinks.map(({ label, href }) => {
-                    const isActive = pathname === href;
-                    return (
-                      <Link
-                        key={label}
-                        href={href}
-                        className={`block px-4 py-2 rounded text-md transition-all duration-200 ${
-                          isActive
-                            ? "border-b-2 border-white pb-1 text-white bg-neutral-800"
-                            : "text-neutral-300 hover:text-neutral-400 hover:bg-neutral-800"
+            {/* Mobile Nav Links */}
+            <nav className="flex-1 px-4 py-2 flex flex-col">
+              <div className="space-y-2">
+                {navLinks.map(({ label, href }) => {
+                  const isActive = pathname === href;
+                  return (
+                    <Link
+                      key={label}
+                      href={href}
+                      className={`block px-4 py-2 rounded text-md transition-all duration-200 ${isActive
+                        ? "border-b-2 border-white pb-1 text-white bg-neutral-800"
+                        : "text-neutral-300 hover:text-neutral-400 hover:bg-neutral-800"
                         }`}
-                        style={{ fontFamily: "var(--font-bebas-nueue)" }}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        {label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </nav>
-
-              {/* Mobile Wallet & Theme */}
-              <div className="p-3 space-y-2">
-                <ConnectButton
-                  className={`w-full font-medium rounded-full transition-colors text-sm py-2 ${
-                    resolvedTheme === "dark"
-                      ? "bg-white text-black hover:bg-neutral-200"
-                      : "bg-black text-white hover:bg-neutral-200"
-                  }`}
-                >
-                  Connect Wallet
-                </ConnectButton>
-                <div className="flex justify-center">
-                  <ModeToggle />
-                </div>
+                      style={{ fontFamily: "var(--font-bebas-nueue)" }}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {label}
+                    </Link>
+                  );
+                })}
               </div>
+            </nav>
+
+            {/* Mobile Wallet */}
+            <div className="wkit-mobile-wrapper p-4 border-t border-neutral-800">
+              <ConnectButton />
             </div>
           </div>
         </div>

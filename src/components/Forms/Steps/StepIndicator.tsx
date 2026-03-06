@@ -15,12 +15,12 @@ const StepIndicator = ({
   stepTitles,
 }: StepIndicatorProps) => {
   return (
-    <div className="w-full mb-8">
-      <div className="flex items-center justify-between">
-        {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
-          <div key={step} className="flex items-center">
+    <div className="w-full mb-8 max-w-full">
+      <div className="flex items-center justify-between w-full">
+        {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step, index) => (
+          <React.Fragment key={step}>
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+              className={`w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full flex items-center justify-center border-2 transition-all ${
                 step < currentStep
                   ? "bg-green-500 border-green-500 text-white"
                   : step === currentStep
@@ -29,38 +29,44 @@ const StepIndicator = ({
               }`}
             >
               {step < currentStep ? (
-                <Check className="w-5 h-5" />
+                <Check className="w-4 h-4 sm:w-5 sm:h-5" />
               ) : (
-                <span className="text-sm font-medium">{step}</span>
+                <span className="text-xs sm:text-sm font-medium">{step}</span>
               )}
             </div>
             {step < totalSteps && (
               <div
-                className={`h-1 w-20 mx-2 ml-14 transition-all ${
+                className={`h-1 flex-1 mx-2 sm:mx-4 transition-all min-w-[10px] sm:min-w-[20px] ${
                   step < currentStep
                     ? "bg-green-500"
                     : "bg-neutral-200 dark:bg-neutral-700"
                 }`}
               />
             )}
-          </div>
+          </React.Fragment>
         ))}
       </div>
-      <div className="flex justify-between mt-3">
-        {stepTitles.map((title, index) => (
-          <div
-            key={index}
-            className={`text-sm font-medium transition-all ${
-              index + 1 === currentStep
-                ? "text-black dark:text-white"
-                : index + 1 < currentStep
-                ? "text-green-600"
-                : "text-neutral-500"
-            }`}
-          >
-            {title}
-          </div>
-        ))}
+      <div className="flex justify-between mt-3 relative w-full">
+        {stepTitles.map((title, index) => {
+          let alignClass = "text-center";
+          if (index === 0) alignClass = "text-left";
+          if (index === stepTitles.length - 1) alignClass = "text-right";
+          
+          return (
+            <div
+              key={index}
+              className={`text-[10px] sm:text-sm font-medium transition-all w-8 sm:w-10 ${alignClass} ${
+                index + 1 === currentStep
+                  ? "text-black dark:text-white"
+                  : index + 1 < currentStep
+                  ? "text-green-600"
+                  : "text-neutral-500"
+              }`}
+            >
+              {title}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
