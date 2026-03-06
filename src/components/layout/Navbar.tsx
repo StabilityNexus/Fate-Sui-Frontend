@@ -97,7 +97,7 @@ const Navbar = () => {
           </nav>
 
           {/* Desktop Wallet & Theme */}
-          <div className="hidden lg:flex items-center space-x-4 flex-shrink-0 justify-end ml-auto wkit-desktop-wrapper">
+          <div className="hidden lg:flex items-center space-x-4 flex-shrink-0 justify-end ml-auto">
             <ConnectButton />
             <ModeToggle />
           </div>
@@ -124,47 +124,49 @@ const Navbar = () => {
             className="fixed inset-0 bg-black bg-opacity-50"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="fixed top-0 right-0 h-[100dvh] w-[280px] sm:w-80 bg-black shadow-xl border-l border-neutral-800 flex flex-col overflow-y-auto">
-            {/* Mobile Menu Header */}
-            <div className="flex items-center justify-between p-4 border-b border-neutral-800">
-              <span className="text-white font-medium">Menu</span>
-              <div className="flex items-center space-x-2">
-                <ModeToggle />
-                <button
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-1 rounded text-white hover:bg-neutral-800"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+          <div className="fixed top-0 right-0 h-full w-[280px] sm:w-80 bg-black shadow-xl border-l border-neutral-800">
+            <div className="flex flex-col h-full">
+              {/* Mobile Menu Header */}
+              <div className="flex items-center justify-between p-4 border-b border-neutral-800">
+                <span className="text-white font-medium">Menu</span>
+                <div className="flex items-center space-x-2">
+                  <ModeToggle />
+                  <button
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="p-1 rounded text-white hover:bg-neutral-800"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* Mobile Nav Links */}
-            <nav className="flex-1 px-4 py-2 flex flex-col">
-              <div className="space-y-2">
-                {navLinks.map(({ label, href }) => {
-                  const isActive = pathname === href;
-                  return (
-                    <Link
-                      key={label}
-                      href={href}
-                      className={`block px-4 py-2 rounded text-md transition-all duration-200 ${isActive
-                        ? "border-b-2 border-white pb-1 text-white bg-neutral-800"
-                        : "text-neutral-300 hover:text-neutral-400 hover:bg-neutral-800"
-                        }`}
-                      style={{ fontFamily: "var(--font-bebas-nueue)" }}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {label}
-                    </Link>
-                  );
-                })}
+              {/* Mobile Nav Links */}
+              <nav className="flex-1 px-4 py-2">
+                <div className="space-y-2">
+                  {navLinks.map(({ label, href }) => {
+                    const isActive = pathname === href;
+                    return (
+                      <Link
+                        key={label}
+                        href={href}
+                        className={`block px-4 py-2 rounded text-md transition-all duration-200 ${isActive
+                          ? "border-b-2 border-white pb-1 text-white bg-neutral-800"
+                          : "text-neutral-300 hover:text-neutral-400 hover:bg-neutral-800"
+                          }`}
+                        style={{ fontFamily: "var(--font-bebas-nueue)" }}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </nav>
+
+              {/* Mobile Wallet */}
+              <div className="wkit-mobile-wrapper p-4 mt-auto">
+                <ConnectButton />
               </div>
-            </nav>
-
-            {/* Mobile Wallet */}
-            <div className="wkit-mobile-wrapper p-4 border-t border-neutral-800">
-              <ConnectButton />
             </div>
           </div>
         </div>
