@@ -184,12 +184,25 @@ html body .wkit-select-item__icon-img {
 }
 
 
+/* Override wallet-kit CSS variables for dark mode — this propagates to ALL child elements */
+html.dark {
+  --wkit-bg-rgb: 26, 26, 26;
+  --wkit-on-bg-rgb: 237, 237, 237;
+}
+
 html body .wkit-dialog__content {
-  background-color: #ffffff !important;
+  background-color: rgba(var(--wkit-bg-rgb), 1) !important;
 }
 
 html.dark .wkit-dialog__content {
-  background-color: #1a1a1a !important;
+  background-color: rgba(var(--wkit-bg-rgb), 1) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* "New to Sui" footer bar */
+html.dark .wkit-new-to-sui {
+  background-color: rgba(var(--wkit-bg-rgb), 1) !important;
+  border-top-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 
@@ -204,6 +217,7 @@ html.dark .wkit-dialog__content {
   border-radius: 16px !important;
   display: flex !important;
   align-items: center !important;
+  justify-content: center !important;
   max-width: 100% !important;
   width: fit-content !important;
   /* Branded: visible on dark navbar */
@@ -234,6 +248,7 @@ html.dark .wkit-dialog__content {
   border-radius: 16px !important;
   display: flex !important;
   align-items: center !important;
+  justify-content: center !important;
   max-width: 100% !important;
   width: fit-content !important;
   /* Frosted-glass pill — visible on dark navbar */
@@ -332,15 +347,18 @@ html body .wkit-select-item:hover {
 }
 
 
-.dark .wkit-disconnect-button {
-  background-color: #ffffff !important;
-  color: #1a1a1a !important;
+html.dark .wkit-disconnect-button {
+  background-color: rgba(var(--wkit-on-bg-rgb), 0.08) !important;
+  color: rgba(var(--wkit-on-bg-rgb), 0.9) !important;
 }
 
-.dark html body .wkit-select-item {
-  background-color: #27272a !important;
-  /* dark mode: zinc-800 */
-  color: #f4f4f5 !important;
+html.dark body .wkit-select-item {
+  color: rgba(var(--wkit-on-bg-rgb), 0.85) !important;
+}
+
+html.dark body .wkit-select-item:hover {
+  background-color: rgba(var(--wkit-on-bg-rgb), 0.08) !important;
+  color: rgba(var(--wkit-on-bg-rgb), 1) !important;
 }
 
 
