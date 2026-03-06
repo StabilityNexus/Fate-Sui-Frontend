@@ -110,29 +110,29 @@ const navigation = [
 
 export default function Footer() {
   return (
-    <footer className='w-full px-6 md:px-24 py-8 bg-secondary/20 border-t border-border'>
+    <footer className='w-full px-6 md:px-24 py-8 bg-black border-t border-neutral-800'>
       <div className='max-w-6xl mx-auto'>
         <div className='flex flex-col md:flex-row items-center justify-between gap-6'>
           {/* Navigation Links */}
           <div className='flex items-center justify-between'>
-        <Link
-          href='https://stability.nexus/'
-          target='_blank'
-          className='cursor-pointer'
-        >
-          <Image
-            unoptimized
-            fetchPriority='high'
-            loading='lazy'
-            src='./logo-animated.gif'
-            alt='Stability Nexus Logo'
-            height={50}
-            width={50}
-          />
-        </Link>
-      </div>
-          <div className='flex flex-wrap items-center gap-6 text-sm text-muted-foreground text-center'>
-             © 2023-2025 The Stable Order. All rights reserved.
+            <Link
+              href='https://stability.nexus/'
+              target='_blank'
+              className='cursor-pointer'
+            >
+              <Image
+                unoptimized
+                fetchPriority='high'
+                loading='lazy'
+                src='/logo-animated.gif'
+                alt='Stability Nexus Logo'
+                height={50}
+                width={50}
+              />
+            </Link>
+          </div>
+          <div className='flex flex-wrap items-center gap-6 text-sm text-white text-center'>
+            © 2023-2025 The Stable Order. All rights reserved.
           </div>
 
           {/* Social Media Links */}
@@ -142,7 +142,7 @@ export default function Footer() {
                 key={item.name}
                 href={item.href}
                 target='_blank'
-                className='rounded-full bg-secondary/50 p-2 hover:bg-primary/20 transition-colors'
+                className='rounded-full bg-neutral-800 p-2 hover:bg-neutral-700 transition-colors text-white'
               >
                 <span className='sr-only'>{item.name}</span>
                 <item.icon className='size-5' aria-hidden='true' />
