@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import logoWhite from "../../../public/logo-white.png";
 import { useTheme } from "next-themes";
@@ -17,6 +17,10 @@ const Navbar = () => {
   const [isThemeReady, setIsThemeReady] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const toggleButtonRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const DRAWER_ID = "mobile-nav-drawer";
+  const DRAWER_LABEL_ID = "mobile-nav-label";
 
   useEffect(() => {
     if (resolvedTheme) {
@@ -40,6 +44,21 @@ const Navbar = () => {
     return () => {
       document.body.style.overflow = "unset";
     };
+  }, [isMobileMenuOpen]);
+
+  // Move focus into drawer when opened; return to toggle when closed
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      // Focus the first focusable element in the drawer
+      setTimeout(() => {
+        const firstFocusable = drawerRef.current?.querySelector<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        firstFocusable?.focus();
+      }, 10);
+    } else {
+      toggleButtonRef.current?.focus();
+    }
   }, [isMobileMenuOpen]);
 
   // Close mobile menu when viewport crosses the lg breakpoint (1024px)
@@ -104,9 +123,12 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <button
+            ref={toggleButtonRef}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden block p-2 rounded text-white hover:bg-neutral-800 transition-colors"
             aria-label="Toggle mobile menu"
+            aria-expanded={isMobileMenuOpen}
+            aria-controls={DRAWER_ID}
           >
             {isMobileMenuOpen ? (
               <X className="w-5 h-5" />
@@ -124,16 +146,24 @@ const Navbar = () => {
             className="fixed inset-0 bg-black bg-opacity-50"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="fixed top-0 right-0 h-full w-[280px] sm:w-80 bg-black shadow-xl border-l border-neutral-800">
+          <div
+            ref={drawerRef}
+            id={DRAWER_ID}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={DRAWER_LABEL_ID}
+            className="fixed top-0 right-0 h-full w-[280px] sm:w-80 bg-black shadow-xl border-l border-neutral-800"
+          >
             <div className="flex flex-col h-full">
               {/* Mobile Menu Header */}
               <div className="flex items-center justify-between p-4 border-b border-neutral-800">
-                <span className="text-white font-medium">Menu</span>
+                <span id={DRAWER_LABEL_ID} className="text-white font-medium">Menu</span>
                 <div className="flex items-center space-x-2">
                   <ModeToggle />
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="p-1 rounded text-white hover:bg-neutral-800"
+                    aria-label="Close menu"
                   >
                     <X className="w-5 h-5" />
                   </button>
