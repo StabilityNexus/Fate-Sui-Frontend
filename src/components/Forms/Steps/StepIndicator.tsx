@@ -55,7 +55,7 @@ const StepIndicator = ({
           return (
             <div
               key={index}
-              className={`text-[10px] sm:text-sm font-medium transition-all w-8 sm:w-10 ${alignClass} ${
+              className={`text-[10px] sm:text-sm font-medium transition-all min-w-0 ${alignClass} ${
                 index + 1 === currentStep
                   ? "text-black dark:text-white"
                   : index + 1 < currentStep

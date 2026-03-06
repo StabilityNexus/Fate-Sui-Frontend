@@ -56,46 +56,6 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Wallet Kit modal alignment — injected after bundle to guarantee cascade win */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        .wkit-select__scroll {
-          margin-left: 0 !important;
-          margin-right: 0 !important;
-          padding-right: 0 !important;
-        }
-        .wkit-select__title {
-          margin-left: 0 !important;
-          padding-left: 6px !important;
-        }
-        .wkit-select-item {
-          padding: 8px 6px !important;
-          gap: 12px !important;
-          border-radius: 12px !important;
-          align-items: center !important;
-          display: flex !important;
-        }
-        .wkit-select-item__icon {
-          width: 36px !important;
-          min-width: 36px !important;
-          height: 36px !important;
-          flex-shrink: 0 !important;
-          margin-right: 0 !important;
-          border-radius: 8px !important;
-          overflow: hidden !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-        }
-        .wkit-select-item__icon-img {
-          width: 36px !important;
-          height: 36px !important;
-          min-width: 36px !important;
-          flex-shrink: 0 !important;
-          border-radius: 8px !important;
-          object-fit: contain !important;
-          display: block !important;
-        }
-      `}} />
       <header className="justify-between p-2 sm:p-3 bg-black sticky top-0 z-50">
         <div className="mx-auto flex items-center justify-between relative px-3 sm:px-5 bg-black">
           {/* Logo */}
