@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,6 +36,7 @@ import { useWallet } from "@suiet/wallet-kit";
 import { useRouter } from "next/navigation";
 import AppLoader from "@/components/Loader";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
+import logger from "@/lib/logger";
 
 const PACKAGE_ID = PROTOCOL_ADDRESSES_TESTNET.PACKAGE_ID;
 const USER_REGISTRY = PROTOCOL_ADDRESSES_TESTNET.USER_REGISTRY;
@@ -479,7 +480,7 @@ const PoolDataLoader = ({
     const bullAvgPrice = safeNumber(userAvgPrices?.bull_avg_price);
     const bearAvgPrice = safeNumber(userAvgPrices?.bear_avg_price);
 
-    console.log("Pool data processing:", {
+    logger.log("Pool data processing:", {
       poolId,
       poolName: pool.name,
       bullReserve,
@@ -535,7 +536,7 @@ const PoolDataLoader = ({
       bearSupply,
     };
 
-    console.log("Processed pool data:", poolData);
+    logger.log("Processed pool data:", poolData);
     onDataLoad(poolData);
   }, [
     loading,
@@ -550,7 +551,7 @@ const PoolDataLoader = ({
 
   // Show individual loading errors for debugging
   if (error) {
-    console.error(`Error loading pool ${poolId}:`, error);
+    logger.error(`Error loading pool ${poolId}:`, error);
   }
 
   return null;
@@ -574,7 +575,7 @@ export default function PortfolioPage() {
     if (!account?.address) return [];
 
     try {
-      console.log("Fetching pools for address:", account.address);
+      logger.log("Fetching pools for address:", account.address);
       const client = new SuiClient({
         url: "https://fullnode.testnet.sui.io:443",
       });
@@ -594,7 +595,7 @@ export default function PortfolioPage() {
         sender: account.address,
       });
 
-      console.log("User exists response:", userExistsResponse);
+      logger.log("User exists response:", userExistsResponse);
 
       // Check user stats
       const statsTx = new Transaction();
@@ -611,7 +612,7 @@ export default function PortfolioPage() {
         sender: account.address,
       });
 
-      console.log("User stats response:", statsResponse);
+      logger.log("User stats response:", statsResponse);
 
       if (statsResponse.results?.[0]?.returnValues) {
         const totalPoolsBytes = Uint8Array.from(
@@ -624,7 +625,7 @@ export default function PortfolioPage() {
         const totalPools = bcs.u64().parse(totalPoolsBytes);
         const totalPages = bcs.u32().parse(totalPagesBytes);
 
-        console.log(`User has ${totalPools} pools across ${totalPages} pages`);
+        logger.log(`User has ${totalPools} pools across ${totalPages} pages`);
       }
 
       let allPoolIds: string[] = [];
@@ -648,17 +649,17 @@ export default function PortfolioPage() {
           sender: account.address,
         });
 
-        console.log(`Registry response page ${currentPage}:`, response);
+        logger.log(`Registry response page ${currentPage}:`, response);
 
         if (response.error) {
-          console.error("Registry call error:", response.error);
+          logger.error("Registry call error:", response.error);
           setRegistryError(response.error);
           return allPoolIds;
         }
 
         const returnValues = response.results?.[0]?.returnValues;
         if (!returnValues || returnValues.length < 4) {
-          console.log("No return values or invalid format");
+          logger.log("No return values or invalid format");
           break;
         }
 
@@ -672,7 +673,7 @@ export default function PortfolioPage() {
         const totalPages = bcs.u32().parse(totalPagesBytes);
         const totalPools = bcs.u64().parse(totalPoolsBytes);
 
-        console.log(
+        logger.log(
           `Page ${currentPage}: ${pagePoolIds.length} pools, hasNext: ${hasNextPage}, totalPages: ${totalPages}, totalPools: ${totalPools}`
         );
 
@@ -684,11 +685,11 @@ export default function PortfolioPage() {
         }
       }
 
-      console.log("Total fetched pool IDs:", allPoolIds);
+      logger.log("Total fetched pool IDs:", allPoolIds);
       setRegistryError("");
       return allPoolIds;
     } catch (err: any) {
-      console.error("Error fetching pools from registry:", err);
+      logger.error("Error fetching pools from registry:", err);
       setRegistryError(err?.message || "Failed to fetch pools");
       return [];
     }
@@ -703,7 +704,7 @@ export default function PortfolioPage() {
         setUserPoolIds(poolIds);
         setPoolsData([]);
         setLoadedPoolsCount(0);
-        console.log("Set user pool IDs:", poolIds);
+        logger.log("Set user pool IDs:", poolIds);
       }
     };
 
@@ -723,7 +724,7 @@ export default function PortfolioPage() {
 
   // Handle pool data loading
   const handlePoolDataLoad = useCallback((data: PoolData) => {
-    console.log("Received pool data:", data);
+    logger.log("Received pool data:", data);
     setPoolsData((prev) => {
       const existingIndex = prev.findIndex((p) => p.id === data.id);
       if (existingIndex >= 0) {

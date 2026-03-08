@@ -1,9 +1,10 @@
-"use client";
+﻿"use client";
 import { useCallback } from "react";
 import { Transaction } from "@mysten/sui/transactions";
 import { useWallet } from "@suiet/wallet-kit";
 import toast from "react-hot-toast";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
+import logger from "@/lib/logger";
 
 interface SellTokensParams {
   amount: number;
@@ -30,7 +31,7 @@ export function useSellTokens() {
       }
 
       try {
-        console.log(`Starting ${isBull ? "bull" : "bear"} token sale...`, {
+        logger.log(`Starting ${isBull ? "bull" : "bear"} token sale...`, {
           amount,
           vaultId,
         });
@@ -51,15 +52,15 @@ export function useSellTokens() {
 
         tx.setGasBudget(100_000_00);
 
-        console.log("Executing sell transaction...");
+        logger.log("Executing sell transaction...");
         const result = await signAndExecuteTransaction({ transaction: tx });
 
-        console.log("Transaction result:", result);
+        logger.log("Transaction result:", result);
         toast.success(`${isBull ? "Bull" : "Bear"} token sale successful!`);
         window.location.reload();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        console.error("Sell token failed:", error);
+        logger.error("Sell token failed:", error);
         toast.error(
           `${isBull ? "Bull" : "Bear"} token sale failed: ${error.message}`
         );
