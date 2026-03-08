@@ -1,6 +1,9 @@
+"use client";
+
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useTheme } from "next-themes";
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {
   className?: string
@@ -109,8 +112,14 @@ const navigation = [
 ]
 
 export default function Footer() {
+  const { resolvedTheme } = useTheme();
+
   return (
-    <footer className='w-full px-6 md:px-24 py-8 bg-secondary/20 border-t border-border'>
+    <footer className={`w-full px-6 md:px-24 py-8 border-t ${
+      resolvedTheme === "dark"
+        ? "bg-black border-white/10"
+        : "bg-white border-black/10"
+    }`}>
       <div className='max-w-6xl mx-auto'>
         <div className='flex flex-col md:flex-row items-center justify-between gap-6'>
           {/* Navigation Links */}
@@ -131,7 +140,9 @@ export default function Footer() {
           />
         </Link>
       </div>
-          <div className='flex flex-wrap items-center gap-6 text-sm text-muted-foreground text-center'>
+          <div className={`flex flex-wrap items-center gap-6 text-sm text-center ${
+            resolvedTheme === "dark" ? "text-neutral-400" : "text-neutral-600"
+          }`}>
              © 2023-2025 The Stable Order. All rights reserved.
           </div>
 
@@ -142,7 +153,11 @@ export default function Footer() {
                 key={item.name}
                 href={item.href}
                 target='_blank'
-                className='rounded-full bg-secondary/50 p-2 hover:bg-primary/20 transition-colors'
+                className={`rounded-full p-2 transition-colors ${
+                  resolvedTheme === "dark"
+                    ? "bg-neutral-800 hover:bg-neutral-700 text-white"
+                    : "bg-neutral-200 hover:bg-neutral-300 text-black"
+                }`}
               >
                 <span className='sr-only'>{item.name}</span>
                 <item.icon className='size-5' aria-hidden='true' />

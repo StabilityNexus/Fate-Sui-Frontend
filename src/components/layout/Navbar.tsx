@@ -46,8 +46,12 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="justify-between p-2 sm:p-3 bg-black sticky top-0 z-50">
-        <div className="mx-auto flex items-center justify-between relative px-3 sm:px-5 bg-black">
+      <header className={`justify-between p-2 sm:p-3 sticky top-0 z-50 shadow-lg ${
+        resolvedTheme === "dark" 
+          ? "bg-black border-b border-white/10 shadow-black/50" 
+          : "bg-white border-b border-black/10 shadow-black/20"
+      }`}>
+        <div className="mx-auto flex items-center justify-between relative px-3 sm:px-5">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/">
@@ -57,7 +61,9 @@ const Navbar = () => {
                   alt="Fate Protocol"
                   width={40}
                   height={40}
-                  className="sm:w-[50px] sm:h-[50px] p-2"
+                  className={`sm:w-[50px] sm:h-[50px] p-2 transition-all ${
+                    resolvedTheme === "light" ? "invert" : ""
+                  }`}
                   priority
                 />
               </div>
@@ -66,7 +72,11 @@ const Navbar = () => {
 
           {/* Desktop Nav Links */}
           <nav
-            className="hidden min-[900px]:flex absolute left-1/2 transform -translate-x-1/2 space-x-6 xl:space-x-8 text-md text-center px-6 xl:px-8 py-2 rounded-full bg-opacity-[10%] bg-black"
+            className={`hidden min-[900px]:flex absolute left-1/2 transform -translate-x-1/2 space-x-6 xl:space-x-8 text-md text-center px-6 xl:px-8 py-2 rounded-full shadow-xl ${
+              resolvedTheme === "dark"
+                ? "bg-black border border-white/20 shadow-black/30"
+                : "bg-white border border-black/20 shadow-black/20"
+            }`}
             style={{ fontFamily: "var(--font-bebas-nueue)" }}
           >
             {navLinks.map(({ label, href }) => {
@@ -75,10 +85,14 @@ const Navbar = () => {
                 <Link
                   key={label}
                   href={href}
-                  className={`hover:text-neutral-400 transition-all duration-200 ${
-                    isActive
-                      ? "border-b-2 border-white pb-1 text-white"
-                      : "text-neutral-300"
+                  className={`transition-all duration-200 ${
+                    resolvedTheme === "dark"
+                      ? isActive
+                        ? "border-b-2 border-white pb-1 text-white"
+                        : "text-neutral-300 hover:text-neutral-400"
+                      : isActive
+                      ? "border-b-2 border-black pb-1 text-black font-semibold"
+                      : "text-neutral-700 hover:text-neutral-900"
                   }`}
                 >
                   {label}
@@ -104,7 +118,11 @@ const Navbar = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="max-[980px]:block hidden p-2 rounded text-white hover:bg-neutral-800 transition-colors"
+            className={`max-[980px]:block hidden p-2 rounded transition-colors ${
+              resolvedTheme === "dark"
+                ? "text-white hover:bg-neutral-800"
+                : "text-black hover:bg-neutral-200"
+            }`}
             aria-label="Toggle mobile menu"
           >
             {isMobileMenuOpen ? (
@@ -120,17 +138,29 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 max-[699px]:block hidden">
           <div
-            className="fixed inset-0 bg-black bg-opacity-50"
+            className={`fixed inset-0 backdrop-blur-sm ${
+              resolvedTheme === "dark" ? "bg-black/90" : "bg-black/40"
+            }`}
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="fixed top-0 right-0 h-full w-64 bg-black shadow-xl">
+          <div className={`fixed top-0 right-0 h-full w-64 shadow-2xl ${
+            resolvedTheme === "dark"
+              ? "bg-black border-l border-white/20"
+              : "bg-white shadow-black/30 border-l border-black/20"
+          }`}>
             <div className="flex flex-col h-full">
               {/* Mobile Menu Header */}
               <div className="flex items-center justify-between p-4">
-                <span className="text-white font-medium">Menu</span>
+                <span className={`font-medium ${
+                  resolvedTheme === "dark" ? "text-white" : "text-black"
+                }`}>Menu</span>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-1 rounded text-white hover:bg-neutral-800"
+                  className={`p-1 rounded ${
+                    resolvedTheme === "dark"
+                      ? "text-white hover:bg-neutral-800"
+                      : "text-black hover:bg-neutral-200"
+                  }`}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -146,9 +176,13 @@ const Navbar = () => {
                         key={label}
                         href={href}
                         className={`block px-4 py-2 rounded text-md transition-all duration-200 ${
-                          isActive
-                            ? "border-b-2 border-white pb-1 text-white bg-neutral-800"
-                            : "text-neutral-300 hover:text-neutral-400 hover:bg-neutral-800"
+                          resolvedTheme === "dark"
+                            ? isActive
+                              ? "border-b-2 border-white pb-1 text-white bg-neutral-800"
+                              : "text-neutral-300 hover:text-neutral-400 hover:bg-neutral-800"
+                            : isActive
+                            ? "border-b-2 border-black pb-1 text-black bg-neutral-200 font-semibold"
+                            : "text-neutral-700 hover:text-neutral-900 hover:bg-neutral-200"
                         }`}
                         style={{ fontFamily: "var(--font-bebas-nueue)" }}
                         onClick={() => setIsMobileMenuOpen(false)}
