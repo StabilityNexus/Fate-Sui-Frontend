@@ -1,6 +1,6 @@
 import React from "react";
 import { RangeSlider } from "./RangeSlider";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, TrendingUp, TrendingDown } from "lucide-react";
 
 interface PredictionCardProps {
   name: string;
@@ -24,53 +24,61 @@ export function PredictionCard({
   onUse,
 }: PredictionCardProps) {
   return (
-    <div className="w-full max-w-sm bg-white hover:scale-[1.02] dark:bg-neutral-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-      {/* Title Section */}
-      <div className="bg-gradient-to-r from-neutral-600 to-neutral-800 p-6">
-        <div className="mb-4">
-          <h2 className="text-2xl font-bold text-white mb-1">{name}</h2>
-          <p className="text-neutral-200 text-sm">{description}</p>
+    <div className="w-full max-w-sm bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-300 overflow-hidden border border-neutral-200 dark:border-neutral-800">
+      {/* Header */}
+      <div className="px-5 pt-5 pb-4">
+        <h2 className="text-lg font-bold text-neutral-900 dark:text-white truncate">{name}</h2>
+        <p className="text-neutral-400 dark:text-neutral-500 text-xs mt-0.5 line-clamp-2">{description}</p>
+      </div>
+
+      {/* Token Rows */}
+      <div className="px-5 pb-2 space-y-3">
+        {/* Bull Row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+              <TrendingUp size={16} className="text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-neutral-900 dark:text-white leading-tight">{bullCoinSymbol}</p>
+              <p className="text-[11px] text-neutral-400 dark:text-neutral-500">BullTKN</p>
+            </div>
+          </div>
+          <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+            {bullPercentage.toFixed(1)}%
+          </span>
+        </div>
+
+        {/* Bear Row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center">
+              <TrendingDown size={16} className="text-rose-600 dark:text-rose-400" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-neutral-900 dark:text-white leading-tight">{bearCoinSymbol}</p>
+              <p className="text-[11px] text-neutral-400 dark:text-neutral-500">BearTKN</p>
+            </div>
+          </div>
+          <span className="text-sm font-bold text-rose-600 dark:text-rose-400">
+            {bearPercentage.toFixed(1)}%
+          </span>
         </div>
       </div>
 
-      <div className="p-6">
-        <div className="mb-6">
-          <div className="flex justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-neutral-500"></div>
-              <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                {bullCoinSymbol}
-              </span>
-            </div>
-            <span className="text-sm font-bold text-neutral-700 dark:text-neutral-400">
-              {bullPercentage.toFixed(1)}%
-            </span>
-          </div>
-
-          <div className="flex justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-neutral-600"></div>
-              <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                {bearCoinSymbol}
-              </span>
-            </div>
-            <span className="text-sm font-bold text-neutral-700 dark:text-neutral-400">
-              {bearPercentage.toFixed(1)}%
-            </span>
-          </div>
-
-          <RangeSlider value={bullPercentage} onChange={() => {}} />
-        </div>
+      {/* Bar + Button */}
+      <div className="px-5 pb-5 pt-3">
+        <RangeSlider value={bullPercentage} onChange={() => {}} />
 
         <button
           onClick={onUse}
-          className="w-full py-3 px-4 bg-gradient-to-r from-neutral-600 to-neutral-700 text-white rounded-xl font-medium 
-                   flex items-center justify-center gap-2 transform transition-all duration-300
-                   hover:from-neutral-700 hover:to-neutral-800 hover:shadow-lg hover:-translate-y-0.5
-                   focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-opacity-50"
+          className="w-full mt-4 py-2.5 px-4 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-200 rounded-xl text-sm font-medium
+                   flex items-center justify-center gap-2 transition-all duration-200
+                   hover:bg-neutral-200 dark:hover:bg-neutral-700
+                   focus:outline-none focus:ring-2 focus:ring-neutral-300 dark:focus:ring-neutral-600"
         >
           Enter Pool
-          <ArrowRight size={18} />
+          <ArrowRight size={16} />
         </button>
       </div>
     </div>
