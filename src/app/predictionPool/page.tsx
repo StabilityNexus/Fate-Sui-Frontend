@@ -614,16 +614,22 @@ const ExploreFatePools = () => {
               <div className="flex flex-col items-center gap-4">
                 <div className="text-lg text-neutral-600 dark:text-neutral-400">
                   {searchQuery ||
-                  Object.values(filters).some(
-                    (f) => f !== "" && f !== 0
-                  )
+                  filters.asset !== "" ||
+                  filters.creator !== "" ||
+                  filters.minLiquidity !== 0 ||
+                  filters.maxLiquidity !== 0 ||
+                  filters.minFees !== 0 ||
+                  filters.maxFees !== 0
                     ? "No pools match your filters"
                     : "No prediction pools found"}
                 </div>
                 {!searchQuery &&
-                  Object.values(filters).every(
-                    (f) => f === "" || f === 0
-                  ) && (
+                  filters.asset === "" &&
+                  filters.creator === "" &&
+                  filters.minLiquidity === 0 &&
+                  filters.maxLiquidity === 0 &&
+                  filters.minFees === 0 &&
+                  filters.maxFees === 0 && (
                     <button
                       className="px-6 py-3 bg-black text-white dark:bg-white dark:text-black rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all"
                       onClick={() =>
