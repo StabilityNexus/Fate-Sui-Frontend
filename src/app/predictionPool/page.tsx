@@ -17,6 +17,8 @@ import {
   TrendingDown,
   Filter,
   X,
+  LayoutGrid,
+  List,
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -34,6 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { PredictionCard } from "@/components/FatePoolCard/FatePoolCard";
 import { ASSET_CONFIG } from "@/config/assets";
 import { bcs } from "@mysten/sui/bcs";
 import toast from "react-hot-toast";
@@ -62,6 +65,7 @@ const ExploreFatePools = () => {
   const stickyRef = useRef<HTMLElement | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const PACKAGE_ID = PROTOCOL_ADDRESSES_TESTNET.PACKAGE_ID;
   const POOL_REGISTRY_ID = PROTOCOL_ADDRESSES_TESTNET.POOL_REGISTRY;
   const [filters, setFilters] = useState<FilterState>({
@@ -413,14 +417,41 @@ const ExploreFatePools = () => {
                   />
                 </div>
 
-                {/* Filter Toggle */}
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center gap-2 px-4 py-3 bg-black text-white dark:bg-white dark:text-black rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all"
-                >
-                  <Filter size={16} />
-                  Filters
-                </button>
+                {/* Filter Toggle & View Toggle */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="flex items-center gap-2 px-4 py-3 bg-black text-white dark:bg-white dark:text-black rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all"
+                  >
+                    <Filter size={16} />
+                    Filters
+                  </button>
+
+                  <div className="flex items-center border border-neutral-300 dark:border-neutral-700 rounded-lg overflow-hidden">
+                    <button
+                      onClick={() => setViewMode("grid")}
+                      className={`p-3 transition-all ${
+                        viewMode === "grid"
+                          ? "bg-black text-white dark:bg-white dark:text-black"
+                          : "bg-white text-neutral-500 dark:bg-black dark:text-neutral-400 hover:text-black dark:hover:text-white"
+                      }`}
+                      title="Grid view"
+                    >
+                      <LayoutGrid size={16} />
+                    </button>
+                    <button
+                      onClick={() => setViewMode("list")}
+                      className={`p-3 transition-all ${
+                        viewMode === "list"
+                          ? "bg-black text-white dark:bg-white dark:text-black"
+                          : "bg-white text-neutral-500 dark:bg-black dark:text-neutral-400 hover:text-black dark:hover:text-white"
+                      }`}
+                      title="List view"
+                    >
+                      <List size={16} />
+                    </button>
+                  </div>
+                </div>
 
                 {/* Stats */}
                 <div className="flex gap-8">
@@ -550,29 +581,19 @@ const ExploreFatePools = () => {
             </div>
           </div>
 
-          {/* Optimized Table */}
-          <div className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-neutral-100 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">
-                      Pool Info
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">
-                      Price
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">
-                      Value
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">
-                      Bull/Bear
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
-                  {isLoading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
+          {/* Loading State */}
+          {isLoading && (
+            viewMode === "grid" ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="animate-pulse bg-neutral-100 dark:bg-neutral-900 rounded-2xl h-64 border border-neutral-200 dark:border-neutral-800"></div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden">
+                <table className="w-full">
+                  <tbody>
+                    {Array.from({ length: 5 }).map((_, i) => (
                       <tr key={i} className="animate-pulse">
                         {Array.from({ length: 4 }).map((_, j) => (
                           <td key={j} className="px-6 py-4">
@@ -580,9 +601,89 @@ const ExploreFatePools = () => {
                           </td>
                         ))}
                       </tr>
-                    ))
-                  ) : filteredPools.length > 0 ? (
-                    filteredPools.map(
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )
+          )}
+
+          {/* Empty State */}
+          {!isLoading && filteredPools.length === 0 && (
+            <div className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800 rounded-lg px-6 py-12 text-center">
+              <div className="flex flex-col items-center gap-4">
+                <div className="text-lg text-neutral-600 dark:text-neutral-400">
+                  {searchQuery ||
+                  Object.values(filters).some(
+                    (f) => f !== "" && f !== 0
+                  )
+                    ? "No pools match your filters"
+                    : "No prediction pools found"}
+                </div>
+                {!searchQuery &&
+                  Object.values(filters).every(
+                    (f) => f === "" || f === 0
+                  ) && (
+                    <button
+                      className="px-6 py-3 bg-black text-white dark:bg-white dark:text-black rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all"
+                      onClick={() =>
+                        router.push("/predictionPool/create")
+                      }
+                    >
+                      Create the First Pool
+                    </button>
+                  )}
+              </div>
+            </div>
+          )}
+
+          {/* Grid View */}
+          {!isLoading && filteredPools.length > 0 && viewMode === "grid" && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredPools.map((pool: any) => (
+                <PredictionCard
+                  key={String(pool.id)}
+                  name={pool.name}
+                  description={pool.description || "No description"}
+                  bullCoinSymbol={pool.bullToken?.symbol || "BULL"}
+                  bearCoinSymbol={pool.bearToken?.symbol || "BEAR"}
+                  bullPercentage={pool.bullPercentage}
+                  bearPercentage={pool.bearPercentage}
+                  onUse={() =>
+                    router.push(
+                      `/predictionPool/pool?id=${encodeURIComponent(
+                        String(pool.id)
+                      )}`
+                    )
+                  }
+                />
+              ))}
+            </div>
+          )}
+
+          {/* List/Table View */}
+          {!isLoading && filteredPools.length > 0 && viewMode === "list" && (
+            <div className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-neutral-100 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-sm font-semibold">
+                        Pool Info
+                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold">
+                        Price
+                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold">
+                        Value
+                      </th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold">
+                        Bull/Bear
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
+                    {filteredPools.map(
                       (pool: {
                         id: boolean | Key | null | undefined;
                         name:
@@ -705,40 +806,12 @@ const ExploreFatePools = () => {
                           </td>
                         </tr>
                       )
-                    )
-                  ) : (
-                    <tr>
-                      <td colSpan={4} className="px-6 py-12 text-center">
-                        <div className="flex flex-col items-center gap-4">
-                          <div className="text-lg text-neutral-600 dark:text-neutral-400">
-                            {searchQuery ||
-                            Object.values(filters).some(
-                              (f) => f !== "" && f !== 0
-                            )
-                              ? "No pools match your filters"
-                              : "No prediction pools found"}
-                          </div>
-                          {!searchQuery &&
-                            Object.values(filters).every(
-                              (f) => f === "" || f === 0
-                            ) && (
-                              <button
-                                className="px-6 py-3 bg-black text-white dark:bg-white dark:text-black rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all"
-                                onClick={() =>
-                                  router.push("/predictionPool/create")
-                                }
-                              >
-                                Create the First Pool
-                              </button>
-                            )}
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
       <Footer />
