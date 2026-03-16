@@ -1,6 +1,12 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {
   className?: string
@@ -12,7 +18,7 @@ const navigation = [
     href: 'https://x.com/hodlCoinStaking',
     icon: (props: IconProps) => (
       <svg fill='currentColor' viewBox='0 0 24 24' {...props}>
-        <path d='M13.6823 10.6218L20.2391 3H18.6854L12.9921 9.61788L8.44486 3H3.2002L10.0765 13.0074L3.2002 21H4.75404L10.7663 14.0113L15.5685 21H20.8131L13.6819 10.6218H13.6823ZM11.5541 13.0956L10.8574 12.0991L5.31391 4.16971H7.70053L12.1742 10.5689L12.8709 11.5655L18.6861 19.8835H16.2995L11.5541 13.096V13.0956Z' />
+        <path d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z' />
       </svg>
     ),
   },
@@ -21,7 +27,7 @@ const navigation = [
     href: 'https://x.com/StabilityNexus',
     icon: (props: IconProps) => (
       <svg fill='currentColor' viewBox='0 0 24 24' {...props}>
-        <path d='M13.6823 10.6218L20.2391 3H18.6854L12.9921 9.61788L8.44486 3H3.2002L10.0765 13.0074L3.2002 21H4.75404L10.7663 14.0113L15.5685 21H20.8131L13.6819 10.6218H13.6823ZM11.5541 13.0956L10.8574 12.0991L5.31391 4.16971H7.70053L12.1742 10.5689L12.8709 11.5655L18.6861 19.8835H16.2995L11.5541 13.096V13.0956Z' />
+        <path d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z' />
       </svg>
     ),
   },
@@ -31,15 +37,11 @@ const navigation = [
     icon: (props: IconProps) => (
       <svg
         fill='currentColor'
-        viewBox='0 0 20 20'
+        viewBox='0 0 24 24'
         xmlns='http://www.w3.org/2000/svg'
         {...props}
       >
-        <g id='SVGRepo_iconCarrier'>
-          <g>
-            <path d='M2.5 18h3V6.9h-3V18zM4 2c-1 0-1.8.8-1.8 1.8S3 5.6 4 5.6s1.8-.8 1.8-1.8S5 2 4 2zm6.6 6.6V6.9h-3V18h3v-5.7c0-3.2 4.1-3.4 4.1 0V18h3v-6.8c0-5.4-5.7-5.2-7.1-2.6z' />
-          </g>
-        </g>
+        <path d='M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z' />
       </svg>
     ),
   },
@@ -66,20 +68,11 @@ const navigation = [
         xmlns='http://www.w3.org/2000/svg'
         {...props}
       >
-        <g id='SVGRepo_bgCarrier' strokeWidth='0'></g>
-        <g
-          id='SVGRepo_tracerCarrier'
-          strokeLinecap='round'
-          strokeLinejoin='round'
-        ></g>
-        <g id='SVGRepo_iconCarrier'>
-          {' '}
-          <path
-            fillRule='evenodd'
-            clipRule='evenodd'
-            d='M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12.3583 9.38244C11.3857 9.787 9.44177 10.6243 6.52657 11.8944C6.05318 12.0827 5.8052 12.2669 5.78263 12.4469C5.74448 12.7513 6.12559 12.8711 6.64455 13.0343C6.71515 13.0565 6.78829 13.0795 6.86327 13.1038C7.37385 13.2698 8.06068 13.464 8.41773 13.4717C8.74161 13.4787 9.1031 13.3452 9.50219 13.0711C12.226 11.2325 13.632 10.3032 13.7202 10.2831C13.7825 10.269 13.8688 10.2512 13.9273 10.3032C13.9858 10.3552 13.98 10.4536 13.9738 10.48C13.9361 10.641 12.4401 12.0318 11.6659 12.7515C11.4246 12.9759 11.2534 13.135 11.2184 13.1714C11.14 13.2528 11.0601 13.3298 10.9833 13.4038C10.509 13.8611 10.1532 14.204 11.003 14.764C11.4114 15.0331 11.7381 15.2556 12.0641 15.4776C12.4201 15.7201 12.7752 15.9619 13.2347 16.2631C13.3517 16.3398 13.4635 16.4195 13.5724 16.4971C13.9867 16.7925 14.3589 17.0579 14.8188 17.0155C15.086 16.991 15.362 16.7397 15.5022 15.9903C15.8335 14.2193 16.4847 10.382 16.6352 8.80081C16.6484 8.66228 16.6318 8.48498 16.6185 8.40715C16.6051 8.32932 16.5773 8.21842 16.4761 8.13633C16.3563 8.03911 16.1714 8.01861 16.0886 8.02C15.7125 8.0267 15.1354 8.22735 12.3583 9.38244Z'
-          ></path>{' '}
-        </g>
+        <path
+          fillRule='evenodd'
+          clipRule='evenodd'
+          d='M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM12.3583 9.38244C11.3857 9.787 9.44177 10.6243 6.52657 11.8944C6.05318 12.0827 5.8052 12.2669 5.78263 12.4469C5.74448 12.7513 6.12559 12.8711 6.64455 13.0343C6.71515 13.0565 6.78829 13.0795 6.86327 13.1038C7.37385 13.2698 8.06068 13.464 8.41773 13.4717C8.74161 13.4787 9.1031 13.3452 9.50219 13.0711C12.226 11.2325 13.632 10.3032 13.7202 10.2831C13.7825 10.269 13.8688 10.2512 13.9273 10.3032C13.9858 10.3552 13.98 10.4536 13.9738 10.48C13.9361 10.641 12.4401 12.0318 11.6659 12.7515C11.4246 12.9759 11.2534 13.135 11.2184 13.1714C11.14 13.2528 11.0601 13.3298 10.9833 13.4038C10.509 13.8611 10.1532 14.204 11.003 14.764C11.4114 15.0331 11.7381 15.2556 12.0641 15.4776C12.4201 15.7201 12.7752 15.9619 13.2347 16.2631C13.3517 16.3398 13.4635 16.4195 13.5724 16.4971C13.9867 16.7925 14.3589 17.0579 14.8188 17.0155C15.086 16.991 15.362 16.7397 15.5022 15.9903C15.8335 14.2193 16.4847 10.382 16.6352 8.80081C16.6484 8.66228 16.6318 8.48498 16.6185 8.40715C16.6051 8.32932 16.5773 8.21842 16.4761 8.13633C16.3563 8.03911 16.1714 8.01861 16.0886 8.02C15.7125 8.0267 15.1354 8.22735 12.3583 9.38244Z'
+        />
       </svg>
     ),
   },
@@ -93,16 +86,7 @@ const navigation = [
         xmlns='http://www.w3.org/2000/svg'
         {...props}
       >
-        <g id='SVGRepo_bgCarrier' strokeWidth='0'></g>
-        <g
-          id='SVGRepo_tracerCarrier'
-          strokeLinecap='round'
-          strokeLinejoin='round'
-        ></g>
-        <g id='SVGRepo_iconCarrier'>
-          {' '}
-          <path d='M18.59 5.88997C17.36 5.31997 16.05 4.89997 14.67 4.65997C14.5 4.95997 14.3 5.36997 14.17 5.69997C12.71 5.47997 11.26 5.47997 9.83001 5.69997C9.69001 5.36997 9.49001 4.95997 9.32001 4.65997C7.94001 4.89997 6.63001 5.31997 5.40001 5.88997C2.92001 9.62997 2.25001 13.28 2.58001 16.87C4.23001 18.1 5.82001 18.84 7.39001 19.33C7.78001 18.8 8.12001 18.23 8.42001 17.64C7.85001 17.43 7.31001 17.16 6.80001 16.85C6.94001 16.75 7.07001 16.64 7.20001 16.54C10.33 18 13.72 18 16.81 16.54C16.94 16.65 17.07 16.75 17.21 16.85C16.7 17.16 16.15 17.42 15.59 17.64C15.89 18.23 16.23 18.8 16.62 19.33C18.19 18.84 19.79 18.1 21.43 16.87C21.82 12.7 20.76 9.08997 18.61 5.88997H18.59ZM8.84001 14.67C7.90001 14.67 7.13001 13.8 7.13001 12.73C7.13001 11.66 7.88001 10.79 8.84001 10.79C9.80001 10.79 10.56 11.66 10.55 12.73C10.55 13.79 9.80001 14.67 8.84001 14.67ZM15.15 14.67C14.21 14.67 13.44 13.8 13.44 12.73C13.44 11.66 14.19 10.79 15.15 10.79C16.11 10.79 16.87 11.66 16.86 12.73C16.86 13.79 16.11 14.67 15.15 14.67Z'></path>{' '}
-        </g>
+        <path d='M18.59 5.88997C17.36 5.31997 16.05 4.89997 14.67 4.65997C14.5 4.95997 14.3 5.36997 14.17 5.69997C12.71 5.47997 11.26 5.47997 9.83001 5.69997C9.69001 5.36997 9.49001 4.95997 9.32001 4.65997C7.94001 4.89997 6.63001 5.31997 5.40001 5.88997C2.92001 9.62997 2.25001 13.28 2.58001 16.87C4.23001 18.1 5.82001 18.84 7.39001 19.33C7.78001 18.8 8.12001 18.23 8.42001 17.64C7.85001 17.43 7.31001 17.16 6.80001 16.85C6.94001 16.75 7.07001 16.64 7.20001 16.54C10.33 18 13.72 18 16.81 16.54C16.94 16.65 17.07 16.75 17.21 16.85C16.7 17.16 16.15 17.42 15.59 17.64C15.89 18.23 16.23 18.8 16.62 19.33C18.19 18.84 19.79 18.1 21.43 16.87C21.82 12.7 20.76 9.08997 18.61 5.88997H18.59ZM8.84001 14.67C7.90001 14.67 7.13001 13.8 7.13001 12.73C7.13001 11.66 7.88001 10.79 8.84001 10.79C9.80001 10.79 10.56 11.66 10.55 12.73C10.55 13.79 9.80001 14.67 8.84001 14.67ZM15.15 14.67C14.21 14.67 13.44 13.8 13.44 12.73C13.44 11.66 14.19 10.79 15.15 10.79C16.11 10.79 16.87 11.66 16.86 12.73C16.86 13.79 16.11 14.67 15.15 14.67Z'></path>
       </svg>
     ),
   },
@@ -110,44 +94,54 @@ const navigation = [
 
 export default function Footer() {
   return (
-    <footer className='w-full px-6 md:px-24 py-8 bg-secondary/20 border-t border-border'>
-      <div className='max-w-6xl mx-auto'>
-        <div className='flex flex-col md:flex-row items-center justify-between gap-6'>
-          {/* Navigation Links */}
-          <div className='flex items-center justify-between'>
-        <Link
-          href='https://stability.nexus/'
-          target='_blank'
-          className='cursor-pointer'
-        >
-          <Image
-            unoptimized
-            fetchPriority='high'
-            loading='lazy'
-            src='./logo-animated.gif'
-            alt='Stability Nexus Logo'
-            height={50}
-            width={50}
-          />
-        </Link>
-      </div>
-          <div className='flex flex-wrap items-center gap-6 text-sm text-muted-foreground text-center'>
-             © 2023-2025 The Stable Order. All rights reserved.
+    <footer className='w-full px-4 md:px-8 py-4 bg-secondary/20 border-t border-border'>
+      <div className='max-w-[1400px] mx-auto'>
+        <div className='flex flex-row items-center justify-between gap-4 md:gap-8'>
+          {/* Logo & Copyright */}
+          <div className='flex items-center gap-4 shrink-0'>
+            <Link
+              href='https://stability.nexus/'
+              target='_blank'
+              className='cursor-pointer shrink-0'
+            >
+              <Image
+                src='/logo-animated.gif'
+                alt='Stability Nexus Logo'
+                height={32}
+                width={32}
+                priority
+                unoptimized
+              />
+            </Link>
+            <div className='hidden sm:block text-[10px] md:text-xs text-muted-foreground whitespace-nowrap'>
+              © 2023-2026 The Stable Order.
+            </div>
           </div>
 
           {/* Social Media Links */}
-          <div className='flex items-center gap-3'>
-            {navigation.map(item => (
-              <Link
-                key={item.name}
-                href={item.href}
-                target='_blank'
-                className='rounded-full bg-secondary/50 p-2 hover:bg-primary/20 transition-colors'
-              >
-                <span className='sr-only'>{item.name}</span>
-                <item.icon className='size-5' aria-hidden='true' />
-              </Link>
-            ))}
+          <div className='flex items-center gap-2 overflow-x-auto no-scrollbar py-1'>
+            <TooltipProvider>
+              {navigation.map(item => (
+                <Tooltip key={item.name}>
+                  <TooltipTrigger asChild>
+                    <Link
+                      href={item.href}
+                      target='_blank'
+                      className='flex items-center gap-1.5 rounded-full bg-secondary/40 px-3 py-1.5 hover:bg-primary/20 transition-all border border-transparent hover:border-primary/30 shrink-0'
+                    >
+                      <item.icon className='size-4' aria-hidden='true' />
+                      <span className='text-[10px] md:text-xs font-medium whitespace-nowrap'>{item.name}</span>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side='top'
+                    className='bg-black text-white border border-white/10'
+                  >
+                    <p>Visit {item.name}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </TooltipProvider>
           </div>
         </div>
       </div>
