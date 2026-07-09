@@ -420,66 +420,49 @@ export default function PredictionPoolDashboard() {
                     showHeader={true}
                   />
 
-                  {/* Rebalance Section */}
-                  <div className="mt-6 p-6 border rounded-xl border-black dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
-                    <h4 className="font-bold mb-3 text-lg text-neutral-900 dark:text-white">
-                      Rebalance Pool
-                    </h4>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4 leading-relaxed">
-                      Fetch current oracle price and move funds from the losing
-                      vault to the winning vault.
-                    </p>
-                    <div className="text-sm space-y-2 mb-4 bg-white dark:bg-neutral-900 p-4 rounded-lg border border-black dark:border-neutral-600">
-                      <div className="flex justify-between">
-                        <span className="text-neutral-600 dark:text-neutral-400">
-                          Price at last rebalance:
-                        </span>
-                        <span
-                          className="font-bold dark:text-white"
-                          style={{ color: asset?.color || "#000" }}
-                        >
-                          1 {asset?.name.split("/")[0] || "?"} ={" "}
-                          {(poolData.current_price / 10000).toLocaleString(
-                            undefined,
-                            {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 8,
-                            }
-                          )}{" "}
-                          {asset?.name.split("/")[1] || "USD"}
-                        </span>
-                      </div>
-                    </div>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="w-full">
-                            <Button
-                              className="w-full bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 font-semibold py-3 transition-all duration-200 shadow-lg hover:shadow-xl"
-                              onClick={handleDistribute}
-                              disabled={
-                                account?.address !== pool?.pool_creator ||
-                                isDistributeLoading
+                  {/* Rebalance Section — only visible to pool creator */}
+                  {account?.address === pool?.pool_creator && (
+                    <div className="mt-6 p-6 border rounded-xl border-black dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
+                      <h4 className="font-bold mb-3 text-lg text-neutral-900 dark:text-white">
+                        Rebalance Pool
+                      </h4>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4 leading-relaxed">
+                        Fetch current oracle price and move funds from the losing
+                        vault to the winning vault.
+                      </p>
+                      <div className="text-sm space-y-2 mb-4 bg-white dark:bg-neutral-900 p-4 rounded-lg border border-black dark:border-neutral-600">
+                        <div className="flex justify-between">
+                          <span className="text-neutral-600 dark:text-neutral-400">
+                            Price at last rebalance:
+                          </span>
+                          <span
+                            className="font-bold dark:text-white"
+                            style={{ color: asset?.color || "#000" }}
+                          >
+                            1 {asset?.name.split("/")[0] || "?"} ={" "}
+                            {(poolData.current_price / 10000).toLocaleString(
+                              undefined,
+                              {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 8,
                               }
-                            >
-                              {isDistributeLoading && (
-                                <RefreshCw className="w-4 h-4 animate-spin mr-2" />
-                              )}
-                              Rebalance Pool
-                            </Button>
-                          </div>
-                        </TooltipTrigger>
-                        {account?.address !== pool?.pool_creator && (
-                          <TooltipContent>
-                            <p className="bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 p-2 rounded-md text-sm">
-                              This action can only be performed by the pool
-                              creator
-                            </p>
-                          </TooltipContent>
+                            )}{" "}
+                            {asset?.name.split("/")[1] || "USD"}
+                          </span>
+                        </div>
+                      </div>
+                      <Button
+                        className="w-full bg-neutral-900 hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-neutral-900 font-semibold py-3 transition-all duration-200 shadow-lg hover:shadow-xl"
+                        onClick={handleDistribute}
+                        disabled={isDistributeLoading}
+                      >
+                        {isDistributeLoading && (
+                          <RefreshCw className="w-4 h-4 animate-spin mr-2" />
                         )}
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
+                        Rebalance Pool
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
