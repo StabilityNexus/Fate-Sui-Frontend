@@ -28,7 +28,7 @@
 
 
 
-[![Static Badge](https://img.shields.io/badge/Stability_Nexus-/Fate_Protocol-228B22?style=for-the-badge&labelColor=FFC517)](https://fate.stability.nexus/)
+[![Static Badge](https://img.shields.io/badge/Stability_Nexus-/Fate_Protocol-228B22?style=for-the-badge&labelColor=FFC517)](https://fate.stability.nexus/) <img src="public/stability.svg" alt="Stability Nexus Logo" width="30"/>
 
 
 
