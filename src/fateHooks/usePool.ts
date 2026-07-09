@@ -1,10 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+﻿/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useCallback } from "react";
 import { SuiClient } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import Decimal from "decimal.js";
 import { PROTOCOL_ADDRESSES_TESTNET } from "@/config/protocol";
+import logger from "@/lib/logger";
 
 interface TokenFields {
   id: {
@@ -84,7 +85,7 @@ export const usePool = (
     userAddr: string
   ): Promise<UserBalances> => {
     if (!packageId) {
-      console.warn("Package ID not found in environment variables");
+      logger.warn("Package ID not found in environment variables");
       return { bull_tokens: 0, bear_tokens: 0 };
     }
 
@@ -96,22 +97,22 @@ export const usePool = (
         arguments: [tx.object(poolObjectId), tx.pure.address(userAddr)],
       });
 
-      console.log(
+      logger.log(
         "Calling move function:",
         `${packageId}::prediction_pool::get_user_balances`
       );
-      console.log("With pool ID:", poolObjectId);
-      console.log("With user address:", userAddr);
+      logger.log("With pool ID:", poolObjectId);
+      logger.log("With user address:", userAddr);
 
       const result = await client.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: userAddr,
       });
 
-      console.log("Dev inspect result:", result);
+      logger.log("Dev inspect result:", result);
 
       if (result.error) {
-        console.error("Move call error:", result.error);
+        logger.error("Move call error:", result.error);
         return { bull_tokens: 0, bear_tokens: 0 };
       }
 
@@ -136,24 +137,24 @@ export const usePool = (
             ? parseU64LEBigInt(returnValues[1][0])
             : BigInt(0);
 
-          console.log("Parsed balances:", { bullTokens, bearTokens });
+          logger.log("Parsed balances:", { bullTokens, bearTokens });
 
           return {
             bull_tokens: Number(bullTokens),
             bear_tokens: Number(bearTokens),
           };
         } else {
-          console.warn("No return values found in result");
+          logger.warn("No return values found in result");
         }
       }
 
       return { bull_tokens: 0, bear_tokens: 0 };
     } catch (error) {
-      console.error("Error fetching user balances:", error);
+      logger.error("Error fetching user balances:", error);
 
       if (error instanceof Error) {
-        console.error("Error message:", error.message);
-        console.error("Error stack:", error.stack);
+        logger.error("Error message:", error.message);
+        logger.error("Error stack:", error.stack);
       }
 
       return { bull_tokens: 0, bear_tokens: 0 };
@@ -165,7 +166,7 @@ export const usePool = (
     userAddr: string
   ): Promise<UserAvgPrices> => {
     if (!packageId) {
-      console.warn("Package ID not found in environment variables");
+      logger.warn("Package ID not found in environment variables");
       return { bull_avg_price: 0, bear_avg_price: 0 };
     }
 
@@ -177,22 +178,22 @@ export const usePool = (
         arguments: [tx.object(poolObjectId), tx.pure.address(userAddr)],
       });
 
-      console.log(
+      logger.log(
         "Calling move function:",
         `${packageId}::prediction_pool::get_user_avg_prices`
       );
-      console.log("With pool ID:", poolObjectId);
-      console.log("With user address:", userAddr);
+      logger.log("With pool ID:", poolObjectId);
+      logger.log("With user address:", userAddr);
 
       const result = await client.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: userAddr,
       });
 
-      console.log("Dev inspect result:", result);
+      logger.log("Dev inspect result:", result);
 
       if (result.error) {
-        console.error("Move call error:", result.error);
+        logger.error("Move call error:", result.error);
         return { bull_avg_price: 0, bear_avg_price: 0 };
       }
 
@@ -225,24 +226,24 @@ export const usePool = (
           //   ? parseU64LEBigInt(returnValues[1][0]) / PRECISION_SCALE
           //   : BigInt(0);
 
-          console.log("Parsed Average Prices:", { bullAvgPrice, bearAvgPrice });
+          logger.log("Parsed Average Prices:", { bullAvgPrice, bearAvgPrice });
 
           return {
             bull_avg_price: Number(bullAvgPrice),
             bear_avg_price: Number(bearAvgPrice),
           };
         } else {
-          console.warn("No return values found in result");
+          logger.warn("No return values found in result");
         }
       }
 
       return { bull_avg_price: 0, bear_avg_price: 0 };
     } catch (error) {
-      console.error("Error fetching user balances:", error);
+      logger.error("Error fetching user average prices:", error);
 
       if (error instanceof Error) {
-        console.error("Error message:", error.message);
-        console.error("Error stack:", error.stack);
+        logger.error("Error message:", error.message);
+        logger.error("Error stack:", error.stack);
       }
 
       return { bull_avg_price: 0, bear_avg_price: 0 };
@@ -255,9 +256,9 @@ export const usePool = (
       return;
     }
 
-    console.log("Fetching pool data for ID:", id);
-    console.log("Package ID:", packageId);
-    console.log("User address:", userAddress);
+    logger.log("Fetching pool data for ID:", id);
+    logger.log("Package ID:", packageId);
+    logger.log("User address:", userAddress);
 
     setLoading(true);
     setError(null);
@@ -268,14 +269,14 @@ export const usePool = (
       });
       const objectID = decodeURIComponent(id);
 
-      console.log("Fetching pool object:", objectID);
+      logger.log("Fetching pool object:", objectID);
 
       const response = await client.getObject({
         id: objectID,
         options: { showContent: true },
       });
 
-      console.log("Pool object response:", response);
+      logger.log("Pool object response:", response);
 
       if (
         !response.data?.content ||
@@ -288,10 +289,10 @@ export const usePool = (
       const poolData = poolFields as Pool;
       setPool(poolData);
 
-      console.log("Pool data loaded successfully:", poolData.name);
+      logger.log("Pool data loaded successfully:", poolData.name);
 
       if (userAddress && packageId) {
-        console.log("Fetching user data...");
+        logger.log("Fetching user data...");
         try {
           const balances = await fetchUserBalances(
             client,
@@ -299,25 +300,25 @@ export const usePool = (
             userAddress
           );
           setUserBalances(balances);
-          console.log("User balances loaded:", balances);
+          logger.log("User balances loaded:", balances);
           const avgPrices = await fetchUserAverageBalances(
             client,
             objectID,
             userAddress
           );
           setUserAvgPrices(avgPrices);
-          console.log("User average prices loaded:", avgPrices);
+          logger.log("User average prices loaded:", avgPrices);
         } catch (balanceError) {
-          console.warn("Failed to fetch user balances:", balanceError);
+          logger.warn("Failed to fetch user balances:", balanceError);
         }
       } else {
-        console.log("Skipping user balance fetch:", {
+        logger.log("Skipping user balance fetch:", {
           hasUserAddress: !!userAddress,
           hasPackageId: !!packageId,
         });
       }
     } catch (err) {
-      console.error("Error in fetchData:", err);
+      logger.error("Error in fetchData:", err);
       setError(err instanceof Error ? err.message : "Unknown error occurred");
     } finally {
       setLoading(false);
