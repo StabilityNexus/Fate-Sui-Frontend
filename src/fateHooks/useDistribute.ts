@@ -1,4 +1,5 @@
 "use client";
+import logger from "@/lib/logger";
 import { useCallback } from "react";
 import { SuiClient } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
@@ -36,7 +37,7 @@ export function useDistribute() {
       }
 
       try {
-        console.log("Starting outcome settlement...", {
+        logger.log("Starting outcome settlement...", {
           poolId: pool.id,
           creator: pool.pool_creator,
         });
@@ -61,7 +62,7 @@ export function useDistribute() {
           );
         }
 
-        console.log("Price updated, settling outcome...");
+        logger.log("Price updated, settling outcome...");
 
         const tx = new Transaction();
         tx.moveCall({
@@ -74,15 +75,15 @@ export function useDistribute() {
 
         tx.setGasBudget(100_000_000);
 
-        console.log("Executing settlement transaction...");
+        logger.log("Executing settlement transaction...");
         const result = await signAndExecuteTransaction({ transaction: tx });
 
-        console.log("Settlement result:", result);
+        logger.log("Settlement result:", result);
         toast.success("Outcome settlement successful!");
         window.location.reload();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        console.error("Settle outcome failed:", error);
+        logger.error("Settle outcome failed:", error);
 
         let errorMessage = "Unknown error occurred";
         if (error.message?.includes("InsufficientGas")) {
